@@ -45,7 +45,7 @@ jobs:
         run: xmake f --toolchain=msvc
 
       - name: Build
-        run: xmake
+        run: xmake -y
 
       - name: Run Tests
         run: xmake r -b test_*
