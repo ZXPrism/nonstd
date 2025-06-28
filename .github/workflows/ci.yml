@@ -48,7 +48,15 @@ jobs:
         run: xmake -y
 
       - name: Run tests
-        run: xmake r -b test_*
+        run: |
+          for exe in $(find build -type f -executable -name "test_*"); do
+            echo "Running $exe"
+            $exe
+          done
 
       - name: Run benchmarks
-        run: xmake r -b bench_*
+        run: |
+          for exe in $(find build -type f -executable -name "bench_*"); do
+            echo "Running $exe"
+            $exe
+          done

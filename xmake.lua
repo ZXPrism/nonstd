@@ -17,20 +17,12 @@ target("nonstd")
 target_end()
 
 rule("test")
-    on_run(function (target)
-        os.execv(target:targetfile())
-    end)
-
     after_build(function (target)
             os.cp(target:targetfile(), "bin/")
     end)
 rule_end()
 
 rule("bench")
-    on_run(function (target)
-        os.execv(target:targetfile())
-    end)
-
     after_build(function (target)
             os.cp(target:targetfile(), "bin/")
     end)
