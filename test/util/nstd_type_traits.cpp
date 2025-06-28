@@ -27,3 +27,10 @@ TEST_CASE("integral_constant::enum") {
 	CHECK_EQ(intcons2::value, E::e2);
 	CHECK_NE(intcons1(), intcons2());
 }
+
+TEST_CASE("is_same") {
+	CHECK(nstd::is_same<int, int>::value);
+	CHECK(nstd::is_same_v<int, int>);
+	CHECK(!nstd::is_same_v<int, bool>);
+	CHECK(!nstd::is_same_v<const char *, decltype("hello")>);
+}
