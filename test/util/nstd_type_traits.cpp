@@ -64,3 +64,23 @@ TEST_CASE("is_volatile") {
 	CHECK(!nstd::is_volatile_v<bool>);
 	CHECK(nstd::is_volatile_v<volatile int>);
 }
+
+TEST_CASE("remove_const") {
+	CHECK(!nstd::is_const_v<nstd::remove_const<const int>::type>);
+	CHECK(!nstd::is_const_v<nstd::remove_const_t<const float>>);
+	CHECK(!nstd::is_same_v<nstd::remove_const_t<const char *>, char *>);
+	CHECK(nstd::is_same_v<nstd::remove_const_t<char *const>, char *>);
+	CHECK(nstd::is_same_v<nstd::remove_const_t<const char &>, const char &>);
+}
+
+TEST_CASE("remove_volatile") {
+	CHECK(!nstd::is_volatile_v<nstd::remove_volatile<volatile int>::type>);
+	CHECK(nstd::is_same_v<nstd::remove_volatile_t<volatile double>, double>);
+}
+
+TEST_CASE("remove_cv") {
+	CHECK(!nstd::is_volatile_v<nstd::remove_cv<volatile int>::type>);
+	CHECK(nstd::is_same_v<nstd::remove_cv_t<const volatile double>, double>);
+	CHECK(nstd::is_same_v<nstd::remove_cv_t<const float>, float>);
+	CHECK(nstd::is_same_v<nstd::remove_cv_t<volatile unsigned>, unsigned>);
+}

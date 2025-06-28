@@ -9,6 +9,7 @@ struct integral_constant {
 	using type = integral_constant;  // injected-class-name; equivalent to integral_constant<Ty, value>
 
 	static constexpr Ty value = val;
+
 	constexpr operator value_type() const noexcept {
 		return value;
 	}
@@ -77,7 +78,61 @@ struct is_volatile<volatile Ty> : true_type {
 
 template<typename Ty>
 constexpr bool is_volatile_v = is_volatile<Ty>::value;
-
 // is_volatile ENDS
+
+// remove_const BEGINS
+template<typename Ty>
+struct remove_const {
+	using type = Ty;
+};
+
+template<typename Ty>
+struct remove_const<const Ty> {
+	using type = Ty;
+};
+
+template<typename Ty>
+using remove_const_t = typename remove_const<Ty>::type;
+// remove_const ENDS
+
+// remove_volatile BEGINS
+template<typename Ty>
+struct remove_volatile {
+	using type = Ty;
+};
+
+template<typename Ty>
+struct remove_volatile<volatile Ty> {
+	using type = Ty;
+};
+
+template<typename Ty>
+using remove_volatile_t = typename remove_volatile<Ty>::type;
+// remove_volatile ENDS
+
+// remove_cv BEGINS
+template<typename Ty>
+struct remove_cv {
+	using type = Ty;
+};
+
+template<typename Ty>
+struct remove_cv<const Ty> {
+	using type = Ty;
+};
+
+template<typename Ty>
+struct remove_cv<volatile Ty> {
+	using type = Ty;
+};
+
+template<typename Ty>
+struct remove_cv<const volatile Ty> {
+	using type = Ty;
+};
+
+template<typename Ty>
+using remove_cv_t = typename remove_cv<Ty>::type;
+// remove_cv ENDS
 
 }  // namespace nstd
