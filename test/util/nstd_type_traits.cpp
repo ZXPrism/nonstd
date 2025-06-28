@@ -2,6 +2,7 @@
 #include <doctest/doctest.h>
 
 #include <util/nstd_type_traits.h>
+#include <type_traits>
 
 TEST_CASE("integral_constant::basic") {
 	nstd::integral_constant<int, 123> x;
@@ -16,6 +17,19 @@ TEST_CASE("integral_constant::basic") {
 }
 
 TEST_CASE("integral_constant::enum") {
+	enum class E {
+		e1,
+		e2
+	};
+	using intcons1 = nstd::integral_constant<E, E::e1>;
+	using intcons2 = nstd::integral_constant<E, E::e2>;
+
+	CHECK_EQ(intcons1(), E::e1);
+	CHECK_EQ(intcons2::value, E::e2);
+	CHECK_NE(intcons1(), intcons2());
+}
+
+TEST_CASE("x") {
 	enum class E {
 		e1,
 		e2

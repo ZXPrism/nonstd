@@ -29,7 +29,7 @@ rule("bench")
 rule_end()
 
 -- test
-for _, file in ipairs(os.files("test/*.cpp")) do
+for _, file in ipairs(os.files("test/*/*.cpp")) do
     local name = "test_" .. path.basename(file)
     target(name)
         set_languages("cxx23")
@@ -42,7 +42,7 @@ for _, file in ipairs(os.files("test/*.cpp")) do
 end
 
 -- bench
-for _, file in ipairs(os.files("benchmark/*.cpp")) do
+for _, file in ipairs(os.files("benchmark/*/*.cpp")) do
     local name = "bench_" .. path.basename(file)
     target(name)
         set_languages("cxx23")
