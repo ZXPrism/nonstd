@@ -29,6 +29,18 @@ rule("bench")
 rule_end()
 
 -- test
+for _, file in ipairs(os.files("test/*.cpp")) do
+    local name = "test_" .. path.basename(file)
+    target(name)
+        set_languages("cxx23")
+        set_kind("binary")
+        add_files(file)
+        add_packages("doctest")
+        add_includedirs("src", "test")
+        add_rules("test")
+    target_end()
+end
+
 for _, file in ipairs(os.files("test/*/*.cpp")) do
     local name = "test_" .. path.basename(file)
     target(name)
@@ -43,6 +55,18 @@ end
 
 -- bench
 for _, file in ipairs(os.files("benchmark/*/*.cpp")) do
+    local name = "bench_" .. path.basename(file)
+    target(name)
+        set_languages("cxx23")
+        set_kind("binary")
+        add_files(file)
+        add_packages("nanobench")
+        add_includedirs("src", "benchmark")
+        add_rules("bench")
+    target_end()
+end
+
+for _, file in ipairs(os.files("benchmark/*.cpp")) do
     local name = "bench_" .. path.basename(file)
     target(name)
         set_languages("cxx23")
