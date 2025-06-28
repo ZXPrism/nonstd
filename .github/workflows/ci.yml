@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test-bench:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        compiler: [gcc, clang, msvc]
+        exclude:
+          - os: macos-latest
+            compiler: msvc
+          - os: ubuntu-latest
+            compiler: msvc
+          - os: windows-latest
+            compiler: gcc
+          - os: windows-latest
+            compiler: clang
+
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} - ${{ matrix.compiler }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install xmake
+        uses: xmake-io/github-action-setup-xmake@v1
+
+      - name: Set up compiler
+        if: matrix.compiler == 'clang'
+        run: xmake f --toolchain=clang
+
+      - name: Set up compiler
+        if: matrix.compiler == 'gcc'
+        run: xmake f --toolchain=gcc
+
+      - name: Set up compiler
+        if: matrix.compiler == 'msvc'
+        run: xmake f --toolchain=msvc
+
+      - name: Build
+        run: xmake
+
+      - name: Run Tests
+        run: xmake r -b test_*
+
+      - name: Run Benchmarks
+        run: xmake r -b bench_*
