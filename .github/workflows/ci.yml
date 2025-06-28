@@ -44,6 +44,9 @@ jobs:
         if: matrix.compiler == 'msvc'
         run: xmake f --toolchain=msvc
 
+      - name: Resolve dependencies
+        run: xmake require --install -y
+
       - name: Build
         run: xmake -y
 
