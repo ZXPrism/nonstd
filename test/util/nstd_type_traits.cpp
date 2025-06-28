@@ -48,3 +48,13 @@ TEST_CASE("conditional") {
 	CHECK(nstd::is_same_v<nstd::conditional_t<true, int, float>, int>);
 	CHECK(nstd::is_same_v<nstd::conditional_t<false, int, float>, float>);
 }
+
+TEST_CASE("is_const") {
+	CHECK(!nstd::is_const<int>::value);
+	CHECK(!nstd::is_const_v<bool>);
+	CHECK(nstd::is_const_v<const int>);
+	CHECK(!nstd::is_const_v<const char *>);
+	CHECK(nstd::is_const_v<const char *const>);
+	CHECK(nstd::is_const_v<char *const>);
+	CHECK(!nstd::is_const_v<const float &>);
+}

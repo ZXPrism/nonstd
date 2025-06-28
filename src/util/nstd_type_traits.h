@@ -53,4 +53,17 @@ template<bool cond, typename Ty1, typename Ty2>
 using conditional_t = typename conditional<cond, Ty1, Ty2>::type;
 // === conditional ENDS ===
 
+// is_const BEGINS
+template<typename Ty>
+struct is_const : false_type {
+};
+
+template<typename Ty>
+struct is_const<const Ty> : true_type {
+};
+
+template<typename Ty>
+constexpr bool is_const_v = is_const<Ty>::value;
+// is_const ENDS
+
 }  // namespace nstd
