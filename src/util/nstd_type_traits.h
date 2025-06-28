@@ -38,4 +38,19 @@ template<typename Ty1, typename Ty2>
 constexpr bool is_same_v = is_same<Ty1, Ty2>::value;
 // === is_same ENDS ===
 
+// === conditional BEGINS ===
+template<bool cond, typename Ty1, typename Ty2>
+struct conditional {
+	using type = Ty1;
+};
+
+template<typename Ty1, typename Ty2>
+struct conditional<false, Ty1, Ty2> {
+	using type = Ty2;
+};
+
+template<bool cond, typename Ty1, typename Ty2>
+using conditional_t = typename conditional<cond, Ty1, Ty2>::type;
+// === conditional ENDS ===
+
 }  // namespace nstd

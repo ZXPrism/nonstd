@@ -42,3 +42,9 @@ TEST_CASE("is_same") {
 
 	CHECK(nstd::is_same_v<int, signed int>);
 }
+
+TEST_CASE("conditional") {
+	CHECK(nstd::is_same_v<nstd::conditional<true, int, float>::type, int>);
+	CHECK(nstd::is_same_v<nstd::conditional_t<true, int, float>, int>);
+	CHECK(nstd::is_same_v<nstd::conditional_t<false, int, float>, float>);
+}
