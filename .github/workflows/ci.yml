@@ -53,6 +53,7 @@ jobs:
           for exe in $(find bin -type f -name "test_*"); do
             echo "Running $exe"
             $exe
+            echo "Finished running $exe"
           done
 
       - name: Run benchmarks
@@ -61,4 +62,5 @@ jobs:
           for exe in $(find bin -type f -name "bench_*"); do
             echo "Running $exe"
             $exe
+            echo "Finished running $exe"
           done
