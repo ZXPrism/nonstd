@@ -58,3 +58,9 @@ TEST_CASE("is_const") {
 	CHECK(nstd::is_const_v<char *const>);
 	CHECK(!nstd::is_const_v<const float &>);
 }
+
+TEST_CASE("is_volatile") {
+	CHECK(!nstd::is_volatile<int>::value);
+	CHECK(!nstd::is_volatile_v<bool>);
+	CHECK(nstd::is_volatile_v<volatile int>);
+}

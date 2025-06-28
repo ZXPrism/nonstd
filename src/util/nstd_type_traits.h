@@ -66,4 +66,18 @@ template<typename Ty>
 constexpr bool is_const_v = is_const<Ty>::value;
 // is_const ENDS
 
+// is_volatile BEGINS
+template<typename Ty>
+struct is_volatile : false_type {
+};
+
+template<typename Ty>
+struct is_volatile<volatile Ty> : true_type {
+};
+
+template<typename Ty>
+constexpr bool is_volatile_v = is_volatile<Ty>::value;
+
+// is_volatile ENDS
+
 }  // namespace nstd
