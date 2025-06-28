@@ -34,24 +34,21 @@ jobs:
 
       - name: Set up compiler
         if: matrix.compiler == 'clang'
-        run: xmake f --toolchain=clang
+        run: xmake f --toolchain=clang -y
 
       - name: Set up compiler
         if: matrix.compiler == 'gcc'
-        run: xmake f --toolchain=gcc
+        run: xmake f --toolchain=gcc -y
 
       - name: Set up compiler
         if: matrix.compiler == 'msvc'
-        run: xmake f --toolchain=msvc
-
-      - name: Resolve dependencies
-        run: xmake require --install -y
+        run: xmake f --toolchain=msvc -y
 
       - name: Build
         run: xmake -y
 
-      - name: Run Tests
+      - name: Run tests
         run: xmake r -b test_*
 
-      - name: Run Benchmarks
+      - name: Run benchmarks
         run: xmake r -b bench_*
