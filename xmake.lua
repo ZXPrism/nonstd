@@ -5,7 +5,7 @@ add_requires("doctest", "nanobench")
 
 target("nonstd")
     set_languages("cxx23")
-    set_kind("binary")
+    set_kind("static")
     set_warnings("all", "error")
 
     add_includedirs("src")
