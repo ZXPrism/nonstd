@@ -28,12 +28,10 @@ using bool_constant = integral_constant<bool, val>;
 
 // === is_same BEGINS ===
 template<typename Ty1, typename Ty2>
-struct is_same : false_type {
-};
+struct is_same : false_type {};
 
 template<typename Ty>
-struct is_same<Ty, Ty> : true_type {
-};
+struct is_same<Ty, Ty> : true_type {};
 
 template<typename Ty1, typename Ty2>
 constexpr bool is_same_v = is_same<Ty1, Ty2>::value;
@@ -56,12 +54,10 @@ using conditional_t = typename conditional<cond, Ty1, Ty2>::type;
 
 // is_const BEGINS
 template<typename Ty>
-struct is_const : false_type {
-};
+struct is_const : false_type {};
 
 template<typename Ty>
-struct is_const<const Ty> : true_type {
-};
+struct is_const<const Ty> : true_type {};
 
 template<typename Ty>
 constexpr bool is_const_v = is_const<Ty>::value;
@@ -69,12 +65,10 @@ constexpr bool is_const_v = is_const<Ty>::value;
 
 // is_volatile BEGINS
 template<typename Ty>
-struct is_volatile : false_type {
-};
+struct is_volatile : false_type {};
 
 template<typename Ty>
-struct is_volatile<volatile Ty> : true_type {
-};
+struct is_volatile<volatile Ty> : true_type {};
 
 template<typename Ty>
 constexpr bool is_volatile_v = is_volatile<Ty>::value;
@@ -134,5 +128,35 @@ struct remove_cv<const volatile Ty> {
 template<typename Ty>
 using remove_cv_t = typename remove_cv<Ty>::type;
 // remove_cv ENDS
+
+// add_const BEGINS
+template<typename Ty>
+struct add_const {
+	using type = const Ty;
+};
+
+template<typename Ty>
+using add_const_t = typename add_const<Ty>::type;
+// add_const ENDS
+
+// add_volatile BEGINS
+template<typename Ty>
+struct add_volatile {
+	using type = volatile Ty;
+};
+
+template<typename Ty>
+using add_volatile_t = typename add_volatile<Ty>::type;
+// add_volatile ENDS
+
+// add_cv BEGINS
+template<typename Ty>
+struct add_cv {
+	using type = const volatile Ty;
+};
+
+template<typename Ty>
+using add_cv_t = typename add_cv<Ty>::type;
+// add_cv ENDS
 
 }  // namespace nstd

@@ -84,3 +84,18 @@ TEST_CASE("remove_cv") {
 	CHECK(nstd::is_same_v<nstd::remove_cv_t<const float>, float>);
 	CHECK(nstd::is_same_v<nstd::remove_cv_t<volatile unsigned>, unsigned>);
 }
+
+TEST_CASE("add_const & add_volatile & add_cv") {
+	struct foo {
+		int m() && { return 0; }
+		int m() const && { return 1; }
+		int m() volatile && { return 2; }
+		int m() const volatile && { return 3; }
+	};
+
+	foo x;
+	CHECK_EQ(foo{}.m(), 0);
+	CHECK_EQ(nstd::add_const_t<foo>{}.m(), 1);
+	CHECK_EQ(nstd::add_volatile_t<foo>{}.m(), 2);
+	CHECK_EQ(nstd::add_cv_t<foo>{}.m(), 3);
+}
