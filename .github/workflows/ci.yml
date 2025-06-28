@@ -50,7 +50,7 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
-          for exe in $(find build -type f -name "test_*"); do
+          for exe in $(find bin -type f -name "test_*"); do
             echo "Running $exe"
             $exe
           done
@@ -58,7 +58,7 @@ jobs:
       - name: Run benchmarks
         shell: bash
         run: |
-          for exe in $(find build -type f -name "bench_*"); do
+          for exe in $(find bin -type f -name "bench_*"); do
             echo "Running $exe"
             $exe
           done
