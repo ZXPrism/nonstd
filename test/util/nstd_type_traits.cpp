@@ -33,4 +33,12 @@ TEST_CASE("is_same") {
 	CHECK(nstd::is_same_v<int, int>);
 	CHECK(!nstd::is_same_v<int, bool>);
 	CHECK(!nstd::is_same_v<const char *, decltype("hello")>);
+
+	// NOTE: char is neither signed char nor unsigned char
+	// it's undefined in standard
+	// most compilers use signed char in essence
+	// but some compilers use unsigned char
+	CHECK(!nstd::is_same_v<char, signed char>);
+
+	CHECK(nstd::is_same_v<int, signed int>);
 }
