@@ -1,5 +1,7 @@
 #pragma once
 
+#include <util/nstd_stddef.h>
+
 namespace nstd {
 
 // === integral_constant BEGINS ===
@@ -178,5 +180,31 @@ struct remove_reference<Ty &&> {
 template<typename Ty>
 using remove_reference_t = typename remove_reference<Ty>::type;
 // remove_reference ENDS
+
+// is_array BEGINS
+template<typename Ty>
+struct is_array : false_type {};
+
+template<typename Ty>
+struct is_array<Ty[]> : true_type {};
+
+template<typename Ty, size_t N>
+struct is_array<Ty[N]> : true_type {};
+
+template<typename Ty>
+constexpr bool is_array_v = is_array<Ty>::value;
+// is_array ENDS
+
+// decay BEGINS
+// template<typename Ty>
+// struct decay {
+// private:
+// public:
+// 	using type = Ty;
+// };
+
+// template<typename Ty>
+// using decay_t = typename decay<Ty>::type;
+// decay ENDS
 
 }  // namespace nstd

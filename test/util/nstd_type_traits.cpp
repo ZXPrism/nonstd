@@ -105,3 +105,14 @@ TEST_CASE("remove_reference") {
 	CHECK(nstd::is_same_v<nstd::remove_reference_t<float &&>, float>);
 	CHECK(nstd::is_same_v<nstd::remove_reference_t<const double &&>, const double>);
 }
+
+TEST_CASE("is_array") {
+	CHECK(!nstd::is_array_v<int>);
+	CHECK(nstd::is_array_v<float[]>);
+	CHECK(nstd::is_array_v<double[123]>);
+
+	class A {};
+	CHECK(!nstd::is_array_v<A>);
+	CHECK(nstd::is_array_v<A[]>);
+	CHECK(nstd::is_array_v<A[123]>);
+}
