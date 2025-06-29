@@ -93,9 +93,15 @@ TEST_CASE("add_const & add_volatile & add_cv") {
 		int m() const volatile && { return 3; }
 	};
 
-	foo x;
 	CHECK_EQ(foo{}.m(), 0);
 	CHECK_EQ(nstd::add_const_t<foo>{}.m(), 1);
 	CHECK_EQ(nstd::add_volatile_t<foo>{}.m(), 2);
 	CHECK_EQ(nstd::add_cv_t<foo>{}.m(), 3);
+}
+
+TEST_CASE("remove_reference") {
+	CHECK(nstd::is_same_v<nstd::remove_reference_t<int>, int>);
+	CHECK(nstd::is_same_v<nstd::remove_reference_t<char &>, char>);
+	CHECK(nstd::is_same_v<nstd::remove_reference_t<float &&>, float>);
+	CHECK(nstd::is_same_v<nstd::remove_reference_t<const double &&>, const double>);
 }

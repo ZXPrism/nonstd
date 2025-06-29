@@ -159,4 +159,24 @@ template<typename Ty>
 using add_cv_t = typename add_cv<Ty>::type;
 // add_cv ENDS
 
+// remove_reference BEGINS
+template<typename Ty>
+struct remove_reference {
+	using type = Ty;
+};
+
+template<typename Ty>
+struct remove_reference<Ty &> {
+	using type = Ty;
+};
+
+template<typename Ty>
+struct remove_reference<Ty &&> {
+	using type = Ty;
+};
+
+template<typename Ty>
+using remove_reference_t = typename remove_reference<Ty>::type;
+// remove_reference ENDS
+
 }  // namespace nstd
