@@ -61,6 +61,13 @@ TEST_CASE("conditional") {
 	CHECK(nstd::is_same_v<nstd::conditional<true, int, float>::type, int>);
 	CHECK(nstd::is_same_v<nstd::conditional_t<true, int, float>, int>);
 	CHECK(nstd::is_same_v<nstd::conditional_t<false, int, float>, float>);
+
+	CHECK(nstd::is_same_v<nstd::conditional<true, int, float>::type,
+	                      std::conditional<true, int, float>::type>);
+	CHECK(nstd::is_same_v<std::conditional_t<true, int, float>,
+	                      std::conditional_t<true, int, float>>);
+	CHECK(nstd::is_same_v<nstd::conditional_t<false, int, float>,
+	                      std::conditional_t<false, int, float>>);
 }
 
 TEST_CASE("is_const") {
@@ -85,11 +92,17 @@ TEST_CASE("remove_const") {
 	CHECK(!nstd::is_same_v<nstd::remove_const_t<const char *>, char *>);
 	CHECK(nstd::is_same_v<nstd::remove_const_t<char *const>, char *>);
 	CHECK(nstd::is_same_v<nstd::remove_const_t<const char &>, const char &>);
+
+	CHECK(nstd::is_same_v<nstd::remove_const_t<const char *>, std::remove_const_t<const char *>>);
+	CHECK(nstd::is_same_v<nstd::remove_const_t<char *const>, std::remove_const_t<char *const>>);
+	CHECK(nstd::is_same_v<nstd::remove_const_t<const char &>, std::remove_const_t<const char &>>);
 }
 
 TEST_CASE("remove_volatile") {
 	CHECK(!nstd::is_volatile_v<nstd::remove_volatile<volatile int>::type>);
 	CHECK(nstd::is_same_v<nstd::remove_volatile_t<volatile double>, double>);
+
+	CHECK(nstd::is_same_v<nstd::remove_volatile_t<volatile double>, std::remove_volatile_t<volatile double>>);
 }
 
 TEST_CASE("remove_cv") {
@@ -97,6 +110,10 @@ TEST_CASE("remove_cv") {
 	CHECK(nstd::is_same_v<nstd::remove_cv_t<const volatile double>, double>);
 	CHECK(nstd::is_same_v<nstd::remove_cv_t<const float>, float>);
 	CHECK(nstd::is_same_v<nstd::remove_cv_t<volatile unsigned>, unsigned>);
+
+	CHECK(nstd::is_same_v<nstd::remove_cv_t<const volatile double>, std::remove_cv_t<const volatile double>>);
+	CHECK(nstd::is_same_v<nstd::remove_cv_t<const float>, std::remove_cv_t<const float>>);
+	CHECK(nstd::is_same_v<nstd::remove_cv_t<volatile unsigned>, std::remove_cv_t<volatile unsigned>>);
 }
 
 TEST_CASE("add_const & add_volatile & add_cv") {
@@ -118,6 +135,11 @@ TEST_CASE("remove_reference") {
 	CHECK(nstd::is_same_v<nstd::remove_reference_t<char &>, char>);
 	CHECK(nstd::is_same_v<nstd::remove_reference_t<float &&>, float>);
 	CHECK(nstd::is_same_v<nstd::remove_reference_t<const double &&>, const double>);
+
+	CHECK(nstd::is_same_v<nstd::remove_reference_t<int>, std::remove_reference_t<int>>);
+	CHECK(nstd::is_same_v<nstd::remove_reference_t<char &>, std::remove_reference_t<char &>>);
+	CHECK(nstd::is_same_v<nstd::remove_reference_t<float &&>, std::remove_reference_t<float &&>>);
+	CHECK(nstd::is_same_v<nstd::remove_reference_t<const double &&>, std::remove_reference_t<const double &&>>);
 }
 
 TEST_CASE("is_array") {
@@ -175,6 +197,13 @@ TEST_CASE("is_pointer") {
 TEST_CASE("type_identity") {
 	CHECK(nstd::is_same_v<int, nstd::type_identity_t<int>>);
 	CHECK(nstd::is_same_v<int *, nstd::type_identity_t<int *>>);
+	CHECK(nstd::is_same_v<int &, nstd::type_identity_t<int &>>);
+	CHECK(nstd::is_same_v<int *&, nstd::type_identity_t<int *&>>);
+
+	CHECK(nstd::is_same_v<nstd::type_identity_t<int>, std::type_identity_t<int>>);
+	CHECK(nstd::is_same_v<nstd::type_identity_t<int *>, std::type_identity_t<int *>>);
+	CHECK(nstd::is_same_v<nstd::type_identity_t<int &>, std::type_identity_t<int &>>);
+	CHECK(nstd::is_same_v<nstd::type_identity_t<int *&>, std::type_identity_t<int *&>>);
 }
 
 TEST_CASE("remove_pointer") {
@@ -188,6 +217,16 @@ TEST_CASE("remove_pointer") {
 	CHECK(!nstd::is_pointer_v<nstd::remove_pointer_t<int *&>>);
 	CHECK(nstd::is_pointer_v<nstd::remove_pointer_t<nstd::remove_reference_t<int **&>>>);
 
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<int>, int>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<int *>, int>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<int **>, int *>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<const int *>, const int>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<const int **>, const int *>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<const int **const volatile>, const int *>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<int (**)(int hel, bool lo, char world)>, int (*)(int, bool, char)>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<int *&>, int *&>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<nstd::remove_reference_t<int **&>>, int *>);
+
 	struct A {
 		void foo();
 		void bar();
@@ -195,6 +234,30 @@ TEST_CASE("remove_pointer") {
 
 	CHECK(nstd::is_same_v<nstd::remove_pointer_t<decltype(&A::foo)>, decltype(&A::foo)>);
 	CHECK(nstd::is_same_v<nstd::remove_pointer_t<void (A::**)()>, decltype(&A::foo)>);
+
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<int>,
+	                      std::remove_pointer_t<int>>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<int *>,
+	                      std::remove_pointer_t<int *>>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<int **>,
+	                      std::remove_pointer_t<int **>>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<const int *>,
+	                      std::remove_pointer_t<const int *>>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<const int **>,
+	                      std::remove_pointer_t<const int **>>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<const int **const volatile>,
+	                      std::remove_pointer_t<const int **const volatile>>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<int (**)(int hel, bool lo, char world)>,
+	                      std::remove_pointer_t<int (**)(int hel, bool lo, char world)>>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<int *&>,
+	                      std::remove_pointer_t<int *&>>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<nstd::remove_reference_t<int **&>>,
+	                      std::remove_pointer_t<nstd::remove_reference_t<int **&>>>);
+
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<decltype(&A::foo)>,
+	                      std::remove_pointer_t<decltype(&A::foo)>>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<void (A::**)()>,
+	                      std::remove_pointer_t<void (A::**)()>>);
 }
 
 TEST_CASE("add_pointer") {
@@ -213,4 +276,22 @@ TEST_CASE("add_pointer") {
 
 	CHECK(!nstd::is_same_v<nstd::add_pointer_t<decltype(&A::foo)>, decltype(&A::foo)>);
 	CHECK(nstd::is_same_v<nstd::add_pointer_t<decltype(&A::bar)>, void (A::**)()>);
+
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<int>,
+	                      std::add_pointer_t<int>>);
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<int *>,
+	                      std::add_pointer_t<int *>>);
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<int *const>,
+	                      std::add_pointer_t<int *const>>);
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<void(int x)>,
+	                      std::add_pointer_t<void(int x)>>);
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<int &>,
+	                      std::add_pointer_t<int &>>);
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<const int &>,
+	                      std::add_pointer_t<const int &>>);
+
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<decltype(&A::foo)>,
+	                      std::add_pointer_t<decltype(&A::foo)>>);
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<decltype(&A::bar)>,
+	                      std::add_pointer_t<decltype(&A::bar)>>);
 }
