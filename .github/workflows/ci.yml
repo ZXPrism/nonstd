@@ -51,16 +51,16 @@ jobs:
         shell: bash
         run: |
           for exe in $(find bin -type f -name "test_*"); do
-            echo "Running $exe"
+            echo "+++ Running $exe"
             $exe
-            echo -e "Finished running $exe\n"
+            echo "--- Finished running $exe"
           done
 
       - name: Run benchmarks
         shell: bash
         run: |
           for exe in $(find bin -type f -name "bench_*"); do
-            echo "Running $exe"
+            echo "+++ Running $exe"
             $exe
-            echo -e "Finished running $exe\n"
+            echo "--- Finished running $exe"
           done
