@@ -3,6 +3,8 @@
 
 #include <util/nstd_type_traits.h>
 
+#include <type_traits>
+
 TEST_CASE("integral_constant::basic") {
 	nstd::integral_constant<int, 123> x;
 	nstd::integral_constant<int, 456> y;
@@ -156,9 +158,9 @@ TEST_CASE("is_pointer") {
 	CHECK(nstd::is_pointer_v<float **>);
 	CHECK(!nstd::is_pointer_v<int &>);
 	CHECK(nstd::is_pointer_v<int (*)()>);
-	CHECK(!nstd::is_pointer_v<int[42]>);    // NOTE: array is not pointer
-	CHECK(!nstd::is_pointer_v<int[]>);      // NOTE: array is not pointer
-	CHECK(!nstd::is_pointer_v<nullptr_t>);  // NOTE: nullptr is not pointer
+	CHECK(!nstd::is_pointer_v<int[42]>);          // NOTE: array is not pointer
+	CHECK(!nstd::is_pointer_v<int[]>);            // NOTE: array is not pointer
+	CHECK(!nstd::is_pointer_v<nstd::nullptr_t>);  // NOTE: nullptr is not pointer
 
 	struct A {
 		int a;
@@ -168,4 +170,47 @@ TEST_CASE("is_pointer") {
 
 	CHECK(!nstd::is_pointer_v<decltype(&A::a)>);
 	CHECK(!nstd::is_pointer_v<decltype(&A::b)>);
+}
+
+TEST_CASE("type_identity") {
+	CHECK(nstd::is_same_v<int, nstd::type_identity_t<int>>);
+	CHECK(nstd::is_same_v<int *, nstd::type_identity_t<int *>>);
+}
+
+TEST_CASE("remove_pointer") {
+	CHECK(!nstd::is_pointer_v<nstd::remove_pointer_t<int>>);
+	CHECK(!nstd::is_pointer_v<nstd::remove_pointer_t<int *>>);
+	CHECK(nstd::is_pointer_v<nstd::remove_pointer_t<int **>>);
+	CHECK(!nstd::is_pointer_v<nstd::remove_pointer_t<const int *>>);
+	CHECK(nstd::is_pointer_v<nstd::remove_pointer_t<const int **>>);
+	CHECK(nstd::is_pointer_v<nstd::remove_pointer_t<const int **const volatile>>);
+	CHECK(nstd::is_pointer_v<nstd::remove_pointer_t<int (**)(int hel, bool lo, char world)>>);
+	CHECK(!nstd::is_pointer_v<nstd::remove_pointer_t<int *&>>);
+	CHECK(nstd::is_pointer_v<nstd::remove_pointer_t<nstd::remove_reference_t<int **&>>>);
+
+	struct A {
+		void foo();
+		void bar();
+	};
+
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<decltype(&A::foo)>, decltype(&A::foo)>);
+	CHECK(nstd::is_same_v<nstd::remove_pointer_t<void (A::**)()>, decltype(&A::foo)>);
+}
+
+TEST_CASE("add_pointer") {
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<int>, int *>);
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<int *>, int **>);
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<int *const>, int *const *>);
+	CHECK(!nstd::is_same_v<nstd::add_pointer_t<int *const>, int **const>);
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<void(int x)>, void (*)(int y)>);
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<int &>, int *>);
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<const int &>, const int *>);
+
+	struct A {
+		void foo();
+		void bar();
+	};
+
+	CHECK(!nstd::is_same_v<nstd::add_pointer_t<decltype(&A::foo)>, decltype(&A::foo)>);
+	CHECK(nstd::is_same_v<nstd::add_pointer_t<decltype(&A::bar)>, void (A::**)()>);
 }

@@ -229,6 +229,64 @@ template<typename Ty>
 constexpr bool is_reference_v = is_reference<Ty>::value;
 // is_reference ENDS
 
+// type_identity BEGINS
+template<typename Ty>
+struct type_identity {
+	using type = Ty;
+};
+
+template<typename Ty>
+using type_identity_t = typename type_identity<Ty>::type;
+// type_identity ENDS
+
+// remove_pointer BEGINS
+template<typename Ty>
+struct remove_pointer {
+	using type = Ty;
+};
+
+template<typename Ty>
+struct remove_pointer<Ty *> {
+	using type = Ty;
+};
+
+template<typename Ty>
+struct remove_pointer<Ty *const> {
+	using type = Ty;
+};
+
+template<typename Ty>
+struct remove_pointer<Ty *volatile> {
+	using type = Ty;
+};
+
+template<typename Ty>
+struct remove_pointer<Ty *const volatile> {
+	using type = Ty;
+};
+
+template<typename Ty>
+using remove_pointer_t = typename remove_pointer<Ty>::type;
+// remove_pointer ENDS
+
+// add_pointer BEGINS
+namespace internal {
+
+template<typename Ty>
+auto try_add_pointer(int) -> type_identity<remove_reference_t<Ty> *>;
+
+template<typename Ty>
+auto try_add_pointer(...) -> type_identity<Ty>;
+
+}  // namespace internal
+
+template<typename Ty>
+struct add_pointer : decltype(internal::try_add_pointer<Ty>(0)) {};
+
+template<typename Ty>
+using add_pointer_t = typename add_pointer<Ty>::type;
+// add_pointer ENDS
+
 // decay BEGINS
 // template<typename Ty>
 // struct decay {
