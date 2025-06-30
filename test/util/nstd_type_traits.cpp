@@ -41,6 +41,18 @@ TEST_CASE("is_same") {
 	CHECK(!nstd::is_same_v<char, signed char>);
 
 	CHECK(nstd::is_same_v<int, signed int>);
+
+	struct A {
+		int a;
+		void b();
+		void c();
+	};
+
+	// NOTE: pointer to member functions are special
+	// they're not real pointers!
+	// but can be accessed using operator.* or operator->*
+	CHECK(nstd::is_same_v<void (A::*)(), decltype(&A::b)>);
+	CHECK(nstd::is_same_v<decltype(&A::b), decltype(&A::c)>);
 }
 
 TEST_CASE("conditional") {
@@ -115,4 +127,45 @@ TEST_CASE("is_array") {
 	CHECK(!nstd::is_array_v<A>);
 	CHECK(nstd::is_array_v<A[]>);
 	CHECK(nstd::is_array_v<A[123]>);
+}
+
+TEST_CASE("is_reference") {
+	CHECK(!nstd::is_reference_v<int>);
+	CHECK(nstd::is_reference_v<int &>);
+	CHECK(nstd::is_reference_v<const int &>);
+	CHECK(!nstd::is_reference_v<int *>);
+	CHECK(nstd::is_reference_v<int *******&>);
+	CHECK(nstd::is_reference_v<int *&&>);
+	CHECK(nstd::is_reference_v<const int *&&>);
+
+	class A {};
+	CHECK(!nstd::is_reference_v<A>);
+	CHECK(nstd::is_reference_v<A &>);
+	CHECK(nstd::is_reference_v<const A &>);
+	CHECK(nstd::is_reference_v<const A &&>);
+}
+
+TEST_CASE("is_pointer") {
+	CHECK(!nstd::is_pointer_v<int>);
+	CHECK(nstd::is_pointer_v<int *>);
+	CHECK(nstd::is_pointer_v<int *const>);
+	CHECK(nstd::is_pointer_v<const int *>);
+	CHECK(nstd::is_pointer_v<const int *const>);
+	CHECK(nstd::is_pointer_v<const volatile int *const>);
+	CHECK(nstd::is_pointer_v<const volatile int *const volatile>);
+	CHECK(nstd::is_pointer_v<float **>);
+	CHECK(!nstd::is_pointer_v<int &>);
+	CHECK(nstd::is_pointer_v<int (*)()>);
+	CHECK(!nstd::is_pointer_v<int[42]>);    // NOTE: array is not pointer
+	CHECK(!nstd::is_pointer_v<int[]>);      // NOTE: array is not pointer
+	CHECK(!nstd::is_pointer_v<nullptr_t>);  // NOTE: nullptr is not pointer
+
+	struct A {
+		int a;
+		void b();
+		void c();
+	};
+
+	CHECK(!nstd::is_pointer_v<decltype(&A::a)>);
+	CHECK(!nstd::is_pointer_v<decltype(&A::b)>);
 }

@@ -195,6 +195,40 @@ template<typename Ty>
 constexpr bool is_array_v = is_array<Ty>::value;
 // is_array ENDS
 
+// is_pointer BEGINS
+template<typename Ty>
+struct is_pointer : false_type {};
+
+template<typename Ty>
+struct is_pointer<Ty *> : true_type {};
+
+template<typename Ty>
+struct is_pointer<Ty *const> : true_type {};
+
+template<typename Ty>
+struct is_pointer<Ty *volatile> : true_type {};
+
+template<typename Ty>
+struct is_pointer<Ty *const volatile> : true_type {};
+
+template<typename Ty>
+constexpr bool is_pointer_v = is_pointer<Ty>::value;
+// is_pointer ENDS
+
+// is_reference BEGINS
+template<typename Ty>
+struct is_reference : false_type {};
+
+template<typename Ty>
+struct is_reference<Ty &> : true_type {};
+
+template<typename Ty>
+struct is_reference<Ty &&> : true_type {};
+
+template<typename Ty>
+constexpr bool is_reference_v = is_reference<Ty>::value;
+// is_reference ENDS
+
 // decay BEGINS
 // template<typename Ty>
 // struct decay {
