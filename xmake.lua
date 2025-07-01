@@ -2,6 +2,7 @@ set_project("nonstd")
 
 add_rules("mode.debug", "mode.release")
 add_requires("doctest", "nanobench")
+add_requires("xsimd")
 
 target("nonstd")
     set_languages("cxx23")
@@ -10,6 +11,7 @@ target("nonstd")
 
     add_includedirs("src")
     add_files("src/**.cpp")
+    add_packages("xsimd")
 
     after_build(function (target)
         os.cp(target:targetfile(), "bin/")
@@ -36,36 +38,24 @@ for _, file in ipairs(os.files("test/*.cpp")) do
         set_kind("binary")
         add_files(file)
         add_packages("doctest")
-        add_includedirs("src", "test")
+        add_includedirs("src")
         add_rules("test")
     target_end()
 end
 
-for _, file in ipairs(os.files("test/*/*.cpp")) do
+for _, file in ipairs(os.files("test/**/*.cpp")) do
     local name = "test_" .. path.basename(file)
     target(name)
         set_languages("cxx23")
         set_kind("binary")
         add_files(file)
         add_packages("doctest")
-        add_includedirs("src", "test")
+        add_includedirs("src")
         add_rules("test")
     target_end()
 end
 
 -- bench
-for _, file in ipairs(os.files("benchmark/*/*.cpp")) do
-    local name = "bench_" .. path.basename(file)
-    target(name)
-        set_languages("cxx23")
-        set_kind("binary")
-        add_files(file)
-        add_packages("nanobench")
-        add_includedirs("src", "benchmark")
-        add_rules("bench")
-    target_end()
-end
-
 for _, file in ipairs(os.files("benchmark/*.cpp")) do
     local name = "bench_" .. path.basename(file)
     target(name)
@@ -73,7 +63,19 @@ for _, file in ipairs(os.files("benchmark/*.cpp")) do
         set_kind("binary")
         add_files(file)
         add_packages("nanobench")
-        add_includedirs("src", "benchmark")
+        add_includedirs("src")
+        add_rules("bench")
+    target_end()
+end
+
+for _, file in ipairs(os.files("benchmark/**/*.cpp")) do
+    local name = "bench_" .. path.basename(file)
+    target(name)
+        set_languages("cxx23")
+        set_kind("binary")
+        add_files(file)
+        add_packages("nanobench")
+        add_includedirs("src")
         add_rules("bench")
     target_end()
 end
