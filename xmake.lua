@@ -7,7 +7,7 @@ add_requires("xsimd")
 target("nonstd")
     set_languages("cxx23")
     set_kind("static")
-    set_warnings("all", "error")
+    set_warnings("all", "error", "extra")
 
     add_includedirs("src")
     add_files("src/**.cpp")
