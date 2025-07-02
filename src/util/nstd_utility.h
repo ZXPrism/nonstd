@@ -11,7 +11,7 @@ constexpr Ty &&forward(remove_reference_t<Ty> &x) noexcept {
 
 template<typename Ty>
 constexpr Ty &&forward(remove_reference_t<Ty> &&x) noexcept {
-	// static_assert(, );
+	static_assert(!is_lvalue_reference_v<Ty>, "attempting to forward a rvalue as a lvalue!");
 	return static_cast<Ty &&>(x);
 }
 
