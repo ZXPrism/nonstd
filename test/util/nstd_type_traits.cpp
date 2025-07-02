@@ -312,3 +312,35 @@ TEST_CASE("conjunction") {
 	CHECK(test_conjunction::all_types_same<int(int hello), int(int hi), int(int howru)>());
 	CHECK(!test_conjunction::all_types_same<int, float, int>());
 }
+
+TEST_CASE("add_lvalue_reference") {
+	CHECK(nstd::is_same_v<nstd::add_lvalue_reference_t<int>, int &>);
+	CHECK(nstd::is_same_v<nstd::add_lvalue_reference_t<int &>, int &>);
+	CHECK(nstd::is_same_v<nstd::add_lvalue_reference_t<int &&>, int &>);
+	CHECK(nstd::is_same_v<nstd::add_lvalue_reference_t<void>, void>);
+
+	CHECK(nstd::is_same_v<nstd::add_lvalue_reference_t<int>,
+	                      std::add_lvalue_reference_t<int>>);
+	CHECK(nstd::is_same_v<nstd::add_lvalue_reference_t<int &>,
+	                      std::add_lvalue_reference_t<int &>>);
+	CHECK(nstd::is_same_v<nstd::add_lvalue_reference_t<int &&>,
+	                      std::add_lvalue_reference_t<int &&>>);
+	CHECK(nstd::is_same_v<nstd::add_lvalue_reference_t<void>,
+	                      std::add_lvalue_reference_t<void>>);
+}
+
+TEST_CASE("add_rvalue_reference") {
+	CHECK(nstd::is_same_v<std::add_rvalue_reference_t<int>, int &&>);
+	CHECK(nstd::is_same_v<std::add_rvalue_reference_t<int &>, int &>);
+	CHECK(nstd::is_same_v<std::add_rvalue_reference_t<int &&>, int &&>);
+	CHECK(nstd::is_same_v<std::add_rvalue_reference_t<void>, void>);
+
+	CHECK(nstd::is_same_v<nstd::add_rvalue_reference_t<int>,
+	                      std::add_rvalue_reference_t<int>>);
+	CHECK(nstd::is_same_v<nstd::add_rvalue_reference_t<int &>,
+	                      std::add_rvalue_reference_t<int &>>);
+	CHECK(nstd::is_same_v<nstd::add_rvalue_reference_t<int &&>,
+	                      std::add_rvalue_reference_t<int &&>>);
+	CHECK(nstd::is_same_v<nstd::add_rvalue_reference_t<void>,
+	                      std::add_rvalue_reference_t<void>>);
+}

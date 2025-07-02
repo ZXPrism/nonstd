@@ -299,8 +299,39 @@ struct conjunction<Ty1, Tyn...> : conditional_t<static_cast<bool>(Ty1::value), c
 
 template<typename... Ty>
 constexpr bool conjunction_v = conjunction<Ty...>::value;
-
 // conjunction ENDS
+
+// add_lvalue_reference BEGINS
+namespace internal {
+
+template<typename Ty>
+auto try_add_lvalue_reference(int) -> type_identity<Ty &>;
+
+template<typename Ty>
+auto try_add_lvalue_reference(...) -> type_identity<Ty>;
+
+template<typename Ty>
+auto try_add_rvalue_reference(int) -> type_identity<Ty &&>;
+
+template<typename Ty>
+auto try_add_rvalue_reference(...) -> type_identity<Ty>;
+
+}  // namespace internal
+
+template<typename Ty>
+struct add_lvalue_reference : decltype(internal::try_add_lvalue_reference<Ty>(0)) {};
+
+template<typename Ty>
+using add_lvalue_reference_t = typename add_lvalue_reference<Ty>::type;
+// add_lvalue_reference ENDS
+
+// add_rvalue_reference BEGINS
+template<typename Ty>
+struct add_rvalue_reference : decltype(internal::try_add_rvalue_reference<Ty>(0)) {};
+
+template<typename Ty>
+using add_rvalue_reference_t = typename add_rvalue_reference<Ty>::type;
+// add_rvalue_reference ENDS
 
 // decay BEGINS
 // template<typename Ty>
