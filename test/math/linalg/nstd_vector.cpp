@@ -27,6 +27,12 @@ TEST_CASE("size") {
 	CHECK(nstd::linalg::vector3d::size() == 3);
 }
 
+TEST_CASE("init / default") {
+	constexpr nstd::linalg::vector2f vec2f{};
+	CHECK(check_vector(vec2f, 0.0f, 0.0f));
+	CHECK(!check_vector(vec2f, 0.0f, 1.0f));
+}
+
 TEST_CASE("init / variadic") {
 	constexpr nstd::linalg::vector2f vec2f(123.0f, 456.0f);
 	constexpr nstd::linalg::vector4f vec4f(123.0f, 456.0f, 678.0f, 91011.0f);
@@ -43,4 +49,22 @@ TEST_CASE("init / initializer_list") {
 	CHECK(check_vector(vec2f, 123.0f, 456.0f));
 	CHECK(!check_vector(vec2f, 623.0f, 456.0f));
 	CHECK(check_vector(vec4f, 123.0f, 456.0f, 678.0f, 91011.0f));
+}
+
+TEST_CASE("norm") {
+}
+
+TEST_CASE("norm squared") {
+}
+
+TEST_CASE("normalize") {
+}
+
+TEST_CASE("normalized") {
+}
+
+TEST_CASE("dot") {
+}
+
+TEST_CASE("cross") {
 }

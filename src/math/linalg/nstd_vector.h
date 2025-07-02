@@ -6,18 +6,21 @@
 
 // TODO: REMOVE these deps in future versions
 #include <cassert>
+#include <cmath>
 #include <initializer_list>
 
 namespace nstd {
 
 namespace linalg {
 
-template<typename Derived, typename Ty, size_t N>
+template<typename Derived, typename Ty, size_t N, bool simd>
 class vector_base {
 private:
-	Ty _Data[N];
+	Ty _Data[N]{};
 
 public:
+	constexpr vector_base() = default;
+
 	template<typename... Args>
 	    requires(sizeof...(Args) == N && conjunction_v<is_convertible<Args, Ty>...>)
 	constexpr vector_base(Args &&...args)
@@ -41,19 +44,70 @@ public:
 		return _Data[i];
 	}
 
+	constexpr Ty norm() const {
+		Ty res{};
+		for (size_t i = 0; i < N; i++) {
+			res += _Data[i] * _Data[i];
+		}
+		return std::sqrt(res);
+	}
+
+	constexpr Ty norm_squared() const {
+		Ty res{};
+		for (size_t i = 0; i < N; i++) {
+			res += _Data[i] * _Data[i];
+		}
+		return res;
+	}
+
+	constexpr Ty normalize() {
+		Ty length = norm();
+		if (length) {
+			for (size_t i = 0; i < N; i++) {
+				_Data[i] /= length;
+			}
+		}
+	}
+
+	constexpr friend Derived normalized(const vector_base &vec) {
+		Derived normalized_vec = vec;
+		Ty length = normalized_vec.norm();
+		if (length) {
+			for (size_t i = 0; i < N; i++) {
+				normalized_vec._Data[i] /= length;
+			}
+		}
+		return normalized_vec;
+	}
+
+	constexpr friend Ty dot(const vector_base &lhs, const vector_base &rhs) {
+		Ty res{};
+		for (size_t i = 0; i < N; i++) {
+			res += lhs._Data[i] * rhs._Data[i];
+		}
+		return res;
+	}
+
+	template<size_t _N>
+	    requires(_N == 3)
+	constexpr friend Derived cross(const vector_base<Derived, Ty, _N, simd> &lhs,
+	                               const vector_base<Derived, Ty, _N, simd> &rhs) {
+		return {};
+	}
+
 	static consteval size_t size() {
 		return N;
 	}
 };
 
-template<typename Ty, size_t N>
-class vector : public vector_base<vector<Ty, N>, Ty, N> {
+template<typename Ty, size_t N, bool simd = true>
+class vector : public vector_base<vector<Ty, N>, Ty, N, simd> {
 public:
-	using vector_base<vector<Ty, N>, Ty, N>::vector_base;
+	using vector_base<vector<Ty, N>, Ty, N, simd>::vector_base;
 };
 
-template<typename Ty, size_t N>
-class vector_v2 : public vector_base<vector<Ty, N>, Ty, N> {
+template<typename Ty, size_t N, bool simd = true>
+class vector_v2 : public vector_base<vector<Ty, N>, Ty, N, simd> {
 public:
 };
 
