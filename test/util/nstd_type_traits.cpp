@@ -295,3 +295,20 @@ TEST_CASE("add_pointer") {
 	CHECK(nstd::is_same_v<nstd::add_pointer_t<decltype(&A::bar)>,
 	                      std::add_pointer_t<decltype(&A::bar)>>);
 }
+
+namespace test_conjunction {
+
+template<typename Ty1, typename... Tyn>
+constexpr bool all_types_same() {
+	return nstd::conjunction_v<nstd::is_same<Ty1, Tyn>...>;
+}
+
+}  // namespace test_conjunction
+
+TEST_CASE("conjunction") {
+	CHECK(test_conjunction::all_types_same<int, int, int>());
+	CHECK(!test_conjunction::all_types_same<int, int &, int>());
+	CHECK(!test_conjunction::all_types_same<int, int, const int>());
+	CHECK(test_conjunction::all_types_same<int(int hello), int(int hi), int(int howru)>());
+	CHECK(!test_conjunction::all_types_same<int, float, int>());
+}

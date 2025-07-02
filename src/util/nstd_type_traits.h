@@ -287,6 +287,21 @@ template<typename Ty>
 using add_pointer_t = typename add_pointer<Ty>::type;
 // add_pointer ENDS
 
+// conjunction BEGINS
+template<typename... Ty>
+struct conjunction : true_type {};
+
+template<typename Ty>
+struct conjunction<Ty> : Ty {};
+
+template<typename Ty1, typename... Tyn>
+struct conjunction<Ty1, Tyn...> : conditional_t<static_cast<bool>(Ty1::value), conjunction<Tyn...>, Ty1> {};
+
+template<typename... Ty>
+constexpr bool conjunction_v = conjunction<Ty...>::value;
+
+// conjunction ENDS
+
 // decay BEGINS
 // template<typename Ty>
 // struct decay {
