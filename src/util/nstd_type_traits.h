@@ -348,6 +348,21 @@ template<typename Ty>
 constexpr bool is_void_v = is_void<Ty>::value;
 // is_void ENDS
 
+// is_convertible BEGINS
+template<typename From, typename To>
+struct is_convertible : conjunction<is_void<From>, is_void<To>> {};
+
+template<typename From, typename To>
+    requires requires {
+	    static_cast<To (*)()>(nullptr);
+	    declval<void (&)(To)>()(declval<From>());
+    }
+struct is_convertible<From, To> : true_type {};
+
+template<typename From, typename To>
+constexpr bool is_convertible_v = is_convertible<From, To>::value;
+// is_convertible ENDS
+
 // decay BEGINS
 // template<typename Ty>
 // struct decay {

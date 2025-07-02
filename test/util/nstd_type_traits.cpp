@@ -364,3 +364,42 @@ TEST_CASE("is_void") {
 	CHECK(!nstd::is_void_v<void()>);
 	CHECK(!nstd::is_void_v<void (*)()>);
 }
+
+TEST_CASE("is_convertible") {
+	CHECK(nstd::is_convertible_v<int, int>);
+	CHECK(nstd::is_convertible_v<int, long long>);
+	CHECK(!nstd::is_convertible_v<int, int *>);
+	CHECK(!nstd::is_convertible_v<int *, nstd::size_t>);
+	CHECK(!nstd::is_convertible_v<int *, int[]>);
+	CHECK(nstd::is_convertible_v<int[], int *>);
+	CHECK(nstd::is_convertible_v<int[42], int *>);
+	CHECK(nstd::is_convertible_v<int(), int (*)()>);
+	CHECK(!nstd::is_convertible_v<int (*)(), int()>);
+
+	CHECK_EQ(nstd::is_convertible_v<int, int>, std::is_convertible_v<int, int>);
+	CHECK_EQ(nstd::is_convertible_v<int, long long>, std::is_convertible_v<int, long long>);
+	CHECK_EQ(nstd::is_convertible_v<int, int *>, std::is_convertible_v<int, int *>);
+	CHECK_EQ(nstd::is_convertible_v<int *, nstd::size_t>, std::is_convertible_v<int *, nstd::size_t>);
+	CHECK_EQ(nstd::is_convertible_v<int *, int[]>, std::is_convertible_v<int *, int[]>);
+	CHECK_EQ(nstd::is_convertible_v<int[], int *>, std::is_convertible_v<int[], int *>);
+	CHECK_EQ(nstd::is_convertible_v<int[42], int *>, std::is_convertible_v<int[42], int *>);
+	CHECK_EQ(nstd::is_convertible_v<int(), int (*)()>, std::is_convertible_v<int(), int (*)()>);
+	CHECK_EQ(nstd::is_convertible_v<int (*)(), int()>, std::is_convertible_v<int (*)(), int()>);
+
+	struct A {
+	};
+
+	struct B : A {
+	};
+
+	struct C : B {
+	};
+
+	CHECK(!nstd::is_convertible_v<A *, B *>);
+	CHECK(nstd::is_convertible_v<B *, A *>);
+	CHECK(nstd::is_convertible_v<C *, A *>);
+
+	CHECK_EQ(nstd::is_convertible_v<A *, B *>, std::is_convertible_v<A *, B *>);
+	CHECK_EQ(nstd::is_convertible_v<B *, A *>, std::is_convertible_v<B *, A *>);
+	CHECK_EQ(nstd::is_convertible_v<C *, A *>, std::is_convertible_v<C *, A *>);
+}
