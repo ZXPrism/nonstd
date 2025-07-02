@@ -2,7 +2,7 @@ set_project("nonstd")
 
 add_rules("mode.debug", "mode.release")
 add_requires("doctest", "nanobench")
-add_requires("xsimd")
+add_requires("xsimd", "eigen", "glm")
 
 target("nonstd")
     set_languages("cxx23")
@@ -49,7 +49,12 @@ for _, file in ipairs(os.files("test/**/*.cpp")) do
         set_languages("cxx23")
         set_kind("binary")
         add_files(file)
+
         add_packages("doctest")
+        if string.find(path.absolute(file), "math") then
+            add_packages("eigen")
+        end
+
         add_includedirs("src")
         add_rules("test")
     target_end()
@@ -74,7 +79,12 @@ for _, file in ipairs(os.files("benchmark/**/*.cpp")) do
         set_languages("cxx23")
         set_kind("binary")
         add_files(file)
+        
         add_packages("nanobench")
+        if string.find(path.absolute(file), "math") then
+            add_packages("eigen", "glm")
+        end
+
         add_includedirs("src")
         add_rules("bench")
     target_end()
