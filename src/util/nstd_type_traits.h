@@ -340,6 +340,14 @@ add_rvalue_reference_t<Ty> declval() noexcept {
 }
 // declval ENDS
 
+// is_void BEGINS
+template<typename Ty>
+struct is_void : is_same<void, remove_cv_t<Ty>> {};
+
+template<typename Ty>
+constexpr bool is_void_v = is_void<Ty>::value;
+// is_void ENDS
+
 // decay BEGINS
 // template<typename Ty>
 // struct decay {

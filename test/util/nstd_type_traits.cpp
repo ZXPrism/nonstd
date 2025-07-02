@@ -354,3 +354,13 @@ TEST_CASE("declval") {
 	// decltype(A().foo()) x; // bad: A's default ctor is deleted
 	decltype(nstd::declval<A>().foo()) x;  // good
 }
+
+TEST_CASE("is_void") {
+	CHECK(nstd::is_void_v<void>);
+	CHECK(nstd::is_void_v<const void>);
+	CHECK(nstd::is_void_v<volatile void>);
+	CHECK(nstd::is_void_v<const volatile void>);
+	CHECK(!nstd::is_void_v<void *>);
+	CHECK(!nstd::is_void_v<void()>);
+	CHECK(!nstd::is_void_v<void (*)()>);
+}
