@@ -2,8 +2,11 @@
 
 #include <util/nstd_stddef.h>
 #include <util/nstd_type_traits.h>
+#include <util/nstd_utility.h>
 
-#include <utility>
+// TODO: REMOVE these deps in future versions
+#include <cassert>
+#include <initializer_list>
 
 namespace nstd {
 
@@ -18,26 +21,40 @@ public:
 	template<typename... Args>
 	    requires(sizeof...(Args) == N && conjunction_v<is_convertible<Args, Ty>...>)
 	constexpr vector_base(Args &&...args)
-	    : _Data{ std::forward<Args>(args)... } {
+	    : _Data{ forward<Args>(args)... } {
 	}
 
-	consteval size_t size() const {
+	constexpr vector_base(const std::initializer_list<Ty> &args) {
+		assert(args.size() == N);
+		for (size_t i = 0; i < N; i++) {
+			_Data[i] = args.begin()[i];
+		}
+	}
+
+	constexpr Ty operator[](size_t i) const {
+		assert(i < N);
+		return _Data[i];
+	}
+
+	constexpr Ty &operator[](size_t i) {
+		assert(i < N);
+		return _Data[i];
+	}
+
+	static consteval size_t size() {
 		return N;
 	}
 };
 
 template<typename Ty, size_t N>
 class vector : public vector_base<vector<Ty, N>, Ty, N> {
-private:
-	;
-
 public:
 	using vector_base<vector<Ty, N>, Ty, N>::vector_base;
 };
 
 template<typename Ty, size_t N>
 class vector_v2 : public vector_base<vector<Ty, N>, Ty, N> {
-private:
+public:
 };
 
 using vector2i = vector<int, 2>;
