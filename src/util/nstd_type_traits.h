@@ -335,9 +335,7 @@ using add_rvalue_reference_t = typename add_rvalue_reference<Ty>::type;
 
 // declval BEGINS
 template<typename Ty>
-add_rvalue_reference_t<Ty> declval() noexcept {
-	static_assert(false, "declval can only be used in unevaluated contexts!");
-}
+add_rvalue_reference_t<Ty> declval() noexcept;
 // declval ENDS
 
 // is_void BEGINS
