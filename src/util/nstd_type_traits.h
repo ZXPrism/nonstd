@@ -361,6 +361,28 @@ template<typename From, typename To>
 constexpr bool is_convertible_v = is_convertible<From, To>::value;
 // is_convertible ENDS
 
+// is_lvalue_reference BEGINS
+template<typename Ty>
+struct is_lvalue_reference : false_type {};
+
+template<typename Ty>
+struct is_lvalue_reference<Ty &> : true_type {};
+
+template<typename Ty>
+constexpr bool is_lvalue_reference_v = is_lvalue_reference<Ty>::value;
+// is_lvalue_reference ENDS
+
+// is_rvalue_reference BEGINS
+template<typename Ty>
+struct is_rvalue_reference : false_type {};
+
+template<typename Ty>
+struct is_rvalue_reference<Ty &&> : true_type {};
+
+template<typename Ty>
+constexpr bool is_rvalue_reference_v = is_rvalue_reference<Ty>::value;
+// is_rvalue_reference ENDS
+
 // decay BEGINS
 // template<typename Ty>
 // struct decay {

@@ -403,3 +403,26 @@ TEST_CASE("is_convertible") {
 	CHECK_EQ(nstd::is_convertible_v<B *, A *>, std::is_convertible_v<B *, A *>);
 	CHECK_EQ(nstd::is_convertible_v<C *, A *>, std::is_convertible_v<C *, A *>);
 }
+
+TEST_CASE("is_lvalue_reference") {
+	CHECK(!nstd::is_lvalue_reference_v<int>);
+	CHECK(nstd::is_lvalue_reference_v<int &>);
+	CHECK(nstd::is_lvalue_reference_v<const int &>);
+	CHECK(nstd::is_lvalue_reference_v<int *&>);
+	CHECK(!nstd::is_lvalue_reference_v<int &&>);
+
+	CHECK_EQ(nstd::is_lvalue_reference_v<int>, std::is_lvalue_reference_v<int>);
+	CHECK_EQ(nstd::is_lvalue_reference_v<int &>, std::is_lvalue_reference_v<int &>);
+	CHECK_EQ(nstd::is_lvalue_reference_v<const int &>, std::is_lvalue_reference_v<const int &>);
+	CHECK_EQ(nstd::is_lvalue_reference_v<int *&>, std::is_lvalue_reference_v<int *&>);
+	CHECK_EQ(nstd::is_lvalue_reference_v<int &&>, std::is_lvalue_reference_v<int &&>);
+}
+
+TEST_CASE("is_rvalue_reference") {
+	CHECK_EQ(nstd::is_rvalue_reference_v<int>, std::is_rvalue_reference_v<int>);
+	CHECK_EQ(nstd::is_rvalue_reference_v<int &>, std::is_rvalue_reference_v<int &>);
+	CHECK_EQ(nstd::is_rvalue_reference_v<const int &>, std::is_rvalue_reference_v<const int &>);
+	CHECK_EQ(nstd::is_rvalue_reference_v<int *&>, std::is_rvalue_reference_v<int *&>);
+	CHECK_EQ(nstd::is_rvalue_reference_v<int &&>, std::is_rvalue_reference_v<int &&>);
+	CHECK_EQ(nstd::is_rvalue_reference_v<int *&&>, std::is_rvalue_reference_v<int *&&>);
+}
