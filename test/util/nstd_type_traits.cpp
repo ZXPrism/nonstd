@@ -426,3 +426,34 @@ TEST_CASE("is_rvalue_reference") {
 	CHECK_EQ(nstd::is_rvalue_reference_v<int &&>, std::is_rvalue_reference_v<int &&>);
 	CHECK_EQ(nstd::is_rvalue_reference_v<int *&&>, std::is_rvalue_reference_v<int *&&>);
 }
+
+TEST_CASE("remove_cvref") {
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<int>, int>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<int()>, int()>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<int &>, int>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<int &&>, int>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<const int &>, int>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<const volatile int &>, int>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<const int>, int>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<volatile int>, int>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<const volatile int>, int>);
+
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<int>,
+	                      std::remove_cvref_t<int>>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<int()>,
+	                      std::remove_cvref_t<int()>>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<int &>,
+	                      std::remove_cvref_t<int &>>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<int &&>,
+	                      std::remove_cvref_t<int &&>>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<const int &>,
+	                      std::remove_cvref_t<const int &>>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<const volatile int &>,
+	                      std::remove_cvref_t<const volatile int &>>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<const int>,
+	                      std::remove_cvref_t<const int>>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<volatile int>,
+	                      std::remove_cvref_t<volatile int>>);
+	CHECK(nstd::is_same_v<nstd::remove_cvref_t<const volatile int>,
+	                      std::remove_cvref_t<const volatile int>>);
+}

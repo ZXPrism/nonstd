@@ -383,6 +383,16 @@ template<typename Ty>
 constexpr bool is_rvalue_reference_v = is_rvalue_reference<Ty>::value;
 // is_rvalue_reference ENDS
 
+// remove_cvref BEGINS
+template<typename Ty>
+struct remove_cvref {
+	using type = remove_cv_t<remove_reference_t<Ty>>;  // NOTE: CAN NOT switch order since ref can not have cv qualifers
+};
+
+template<typename Ty>
+using remove_cvref_t = typename remove_cvref<Ty>::type;
+// remove_cvref ENDS
+
 // decay BEGINS
 // template<typename Ty>
 // struct decay {
