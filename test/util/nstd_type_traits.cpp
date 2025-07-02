@@ -344,3 +344,13 @@ TEST_CASE("add_rvalue_reference") {
 	CHECK(nstd::is_same_v<nstd::add_rvalue_reference_t<void>,
 	                      std::add_rvalue_reference_t<void>>);
 }
+
+TEST_CASE("declval") {
+	struct A {
+		A() = delete;
+		int foo() const { return 1; }
+	};
+
+	// decltype(A().foo()) x; // bad: A's default ctor is deleted
+	decltype(nstd::declval<A>().foo()) x;  // good
+}

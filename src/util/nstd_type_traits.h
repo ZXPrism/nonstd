@@ -333,6 +333,13 @@ template<typename Ty>
 using add_rvalue_reference_t = typename add_rvalue_reference<Ty>::type;
 // add_rvalue_reference ENDS
 
+// declval BEGINS
+template<typename Ty>
+add_rvalue_reference_t<Ty> declval() noexcept {
+	static_assert(false, "declval can only be used in unevaluated contexts!");
+}
+// declval ENDS
+
 // decay BEGINS
 // template<typename Ty>
 // struct decay {
