@@ -20,6 +20,18 @@ void BM_std_abs() {
 	ankerl::nanobench::doNotOptimizeAway(res);
 }
 
+void BM_nonstd_abs_float() {
+	float x = -1.234f;
+	auto res = nstd::abs(x);
+	ankerl::nanobench::doNotOptimizeAway(res);
+}
+
+void BM_std_abs_float() {
+	float x = -1.234f;
+	auto res = std::abs(x);
+	ankerl::nanobench::doNotOptimizeAway(res);
+}
+
 TEST_CASE("bench_abs") {
 	auto bench = ankerl::nanobench::Bench();
 	bench.title("bench_abs")
@@ -28,7 +40,9 @@ TEST_CASE("bench_abs") {
 	    .relative(true);
 
 	bench.run("std / abs", BM_std_abs);
+	bench.run("std / abs float", BM_std_abs_float);
 	bench.run("nonstd / abs", BM_nonstd_abs);
+	bench.run("nonstd / abs float", BM_nonstd_abs_float);
 }
 // bench_abs ENDS
 
