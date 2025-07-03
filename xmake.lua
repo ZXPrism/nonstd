@@ -67,7 +67,7 @@ for _, file in ipairs(os.files("benchmark/*.cpp")) do
         set_languages("cxx23")
         set_kind("binary")
         add_files(file)
-        add_packages("nanobench")
+        add_packages("nanobench", "doctest")
         add_includedirs("src")
         add_rules("bench")
     target_end()
@@ -80,7 +80,7 @@ for _, file in ipairs(os.files("benchmark/**/*.cpp")) do
         set_kind("binary")
         add_files(file)
         
-        add_packages("nanobench")
+        add_packages("nanobench", "doctest")
         if string.find(path.absolute(file), "math") then
             add_packages("eigen", "glm")
         end
