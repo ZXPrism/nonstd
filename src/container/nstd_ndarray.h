@@ -8,11 +8,6 @@
 
 namespace nstd {
 
-template<size_t First, size_t... Remain>
-consteval size_t get_first() {
-	return First;
-}
-
 template<typename Ty, bool exception, size_t... DimSize>
     requires(sizeof...(DimSize) > 0)
 class basic_ndarray {
