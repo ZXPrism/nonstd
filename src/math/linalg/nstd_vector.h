@@ -56,6 +56,22 @@ public:
 		return _Data;
 	}
 
+	constexpr Derived operator+(const Derived &rhs) const {
+		return static_cast<const Derived *>(this)->_impl_add(rhs);
+	}
+
+	constexpr Derived operator-(const Derived &rhs) const {
+		return static_cast<const Derived *>(this)->_impl_sub(rhs);
+	}
+
+	constexpr Derived operator*(Ty scalar) const {
+		return static_cast<const Derived *>(this)->_impl_mul_scalar(scalar);
+	}
+
+	constexpr friend Derived operator*(Ty scalar, const Derived &vec) {
+		return _impl_vec_mul_scalar(scalar, vec);
+	}
+
 	constexpr Ty norm() const {
 		Ty res{};
 		for (size_t i = 0; i < N; i++) {
@@ -122,44 +138,44 @@ constexpr Derived cross(const Derived &lhs, const Derived &rhs) {
 
 template<typename Ty, size_t N, bool simd>
 class vector : public vector_base<vector<Ty, N, simd>, Ty, N, simd> {
-public:
-	using value_type = Ty;
 	using base = vector_base<vector, Ty, N, simd>;
 
+public:
+	using value_type = Ty;
 	using base::base;
 
-	constexpr vector operator+(const vector &rhs) const {
+	constexpr vector _impl_add(const vector &rhs) const {
 		vector res;
-		for (int i = 0; i < N; i++) {
+		for (size_t i = 0; i < N; i++) {
 			res._Data[i] = base::_Data[i] + rhs._Data[i];
 		}
 		return res;
 	}
 
-	constexpr vector operator-(const vector &rhs) const {
+	constexpr vector _impl_sub(const vector &rhs) const {
 		vector res;
-		for (int i = 0; i < N; i++) {
+		for (size_t i = 0; i < N; i++) {
 			res._Data[i] = base::_Data[i] - rhs._Data[i];
 		}
 		return res;
 	}
 
-	constexpr vector operator*(Ty scalar) const {
+	constexpr vector _impl_mul_scalar(Ty scalar) const {
 		vector res;
-		for (int i = 0; i < N; i++) {
+		for (size_t i = 0; i < N; i++) {
 			res._Data[i] = base::_Data[i] * scalar;
 		}
 		return res;
 	}
 
 	template<typename _Ty, size_t _N, bool _simd>
-	friend constexpr vector<_Ty, _N, _simd> operator*(_Ty scalar, const vector<_Ty, _N, _simd> &vec);
+	friend constexpr vector<_Ty, _N, _simd> _impl_vec_mul_scalar(_Ty scalar, const vector<_Ty, _N, _simd> &vec);
 };
 
 template<typename Ty, size_t N, bool simd>
-constexpr vector<Ty, N, simd> operator*(Ty scalar, const vector<Ty, N, simd> &vec) {
+constexpr vector<Ty, N, simd> _impl_vec_mul_scalar(Ty scalar, const vector<Ty, N, simd> &vec) {
 	vector<Ty, N, simd> res;
-	for (int i = 0; i < N; i++) {
+	for (size_t i = 0; i < N; i++) {
 		res._Data[i] = vec._Data[i] * scalar;
 	}
 	return res;
