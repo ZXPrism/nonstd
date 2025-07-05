@@ -81,72 +81,74 @@ public:
 		}
 	}
 
-	template<typename _Derived, typename _Ty, size_t _N, bool _simd>
-	constexpr friend _Derived normalized(const vector_base<_Derived, _Ty, _N, _simd> &vec);
+	template<typename _Derived>
+	constexpr friend _Derived normalized(const _Derived &vec);
 
-	template<typename _Derived, typename _Ty, size_t _N, bool _simd>
-	constexpr friend _Ty dot(const vector_base<_Derived, _Ty, _N, _simd> &lhs, const vector_base<_Derived, _Ty, _N, _simd> &rhs);
+	template<typename _Derived>
+	constexpr friend typename _Derived::value_type dot(const _Derived &lhs, const _Derived &rhs);
 
-	template<typename _Derived, typename _Ty, size_t _N, bool _simd>
-	    requires(_N == 3)
-	constexpr friend Derived cross(const vector_base<_Derived, _Ty, _N, _simd> &lhs,
-	                               const vector_base<_Derived, _Ty, _N, _simd> &rhs);
+	template<typename _Derived>
+	    requires(_Derived::size() == 3)
+	constexpr friend _Derived cross(const _Derived &lhs, const _Derived &rhs);
 
 	static consteval size_t size() {
 		return N;
 	}
 };
 
-template<typename Derived, typename Ty, size_t N, bool simd>
-constexpr Derived normalized(const vector_base<Derived, Ty, N, simd> &vec) {
+template<typename Derived>
+constexpr Derived normalized(const Derived &vec) {
 	Derived normalized_vec(vec);
 	normalized_vec.normalize();
 	return normalized_vec;
 }
 
-template<typename Derived, typename Ty, size_t N, bool simd>
-constexpr Ty dot(const vector_base<Derived, Ty, N, simd> &lhs, const vector_base<Derived, Ty, N, simd> &rhs) {
-	Ty res{};
-	for (size_t i = 0; i < N; i++) {
+template<typename Derived>
+constexpr typename Derived::value_type dot(const Derived &lhs, const Derived &rhs) {
+	typename Derived::value_type res{};
+	for (size_t i = 0; i < Derived::size(); i++) {
 		res += lhs._Data[i] * rhs._Data[i];
 	}
 	return res;
 }
 
-template<typename _Derived, typename _Ty, size_t _N, bool _simd>
-    requires(_N == 3)
-constexpr _Derived cross(const vector_base<_Derived, _Ty, _N, _simd> &lhs,
-                         const vector_base<_Derived, _Ty, _N, _simd> &rhs) {
+template<typename Derived>
+    requires(Derived::size() == 3)
+constexpr Derived cross(const Derived &lhs, const Derived &rhs) {
 	return { lhs[1] * rhs[2] - lhs[2] * rhs[1],
 		     lhs[2] * rhs[0] - lhs[0] * rhs[2],
 		     lhs[0] * rhs[1] - lhs[1] * rhs[0] };
 }
 
-template<typename Ty, size_t N, bool simd = true>
-class vector : public vector_base<vector<Ty, N>, Ty, N, simd> {
+template<typename Ty, size_t N, bool simd>
+class vector : public vector_base<vector<Ty, N, simd>, Ty, N, simd> {
 public:
+	using value_type = Ty;
+
 	using vector_base<vector, Ty, N, simd>::vector_base;
-	constexpr vector(const vector_base<vector, Ty, N, simd> &vec_base)
-	    : vector_base<vector, Ty, N, simd>(vec_base) {}
+
+	// vector operator+(const vector_base<vector, Ty, N, simd> &vec_base){
+
+	// }
 };
 
-template<typename Ty, size_t N, bool simd = true>
-class vector_v2 : public vector_base<vector<Ty, N>, Ty, N, simd> {
+template<typename Ty, size_t N, bool simd>
+class vector_v2 : public vector_base<vector<Ty, N, simd>, Ty, N, simd> {
 public:
 };
 
-using vector2i = vector<int, 2>;
-using vector3i = vector<int, 3>;
-using vector4i = vector<int, 4>;
-using vector2ll = vector<long long, 2>;
-using vector3ll = vector<long long, 3>;
-using vector4ll = vector<long long, 4>;
-using vector2f = vector<float, 2>;
-using vector3f = vector<float, 3>;
-using vector4f = vector<float, 4>;
-using vector2d = vector<double, 2>;
-using vector3d = vector<double, 3>;
-using vector4d = vector<double, 4>;
+using vector2i = vector<int, 2, false>;
+using vector3i = vector<int, 3, false>;
+using vector4i = vector<int, 4, false>;
+using vector2ll = vector<long long, 2, false>;
+using vector3ll = vector<long long, 3, false>;
+using vector4ll = vector<long long, 4, false>;
+using vector2f = vector<float, 2, false>;
+using vector3f = vector<float, 3, false>;
+using vector4f = vector<float, 4, false>;
+using vector2d = vector<double, 2, false>;
+using vector3d = vector<double, 3, false>;
+using vector4d = vector<double, 4, false>;
 
 }  // namespace linalg
 
