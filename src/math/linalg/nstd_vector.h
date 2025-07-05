@@ -128,7 +128,7 @@ public:
 
 	using base::base;
 
-	vector operator+(const vector &rhs) const {
+	constexpr vector operator+(const vector &rhs) const {
 		vector res;
 		for (int i = 0; i < N; i++) {
 			res._Data[i] = base::_Data[i] + rhs._Data[i];
@@ -136,14 +136,34 @@ public:
 		return res;
 	}
 
-	vector operator-(const vector &rhs) const {
+	constexpr vector operator-(const vector &rhs) const {
 		vector res;
 		for (int i = 0; i < N; i++) {
 			res._Data[i] = base::_Data[i] - rhs._Data[i];
 		}
 		return res;
 	}
+
+	constexpr vector operator*(Ty scalar) const {
+		vector res;
+		for (int i = 0; i < N; i++) {
+			res._Data[i] = base::_Data[i] * scalar;
+		}
+		return res;
+	}
+
+	template<typename _Ty, size_t _N, bool _simd>
+	friend constexpr vector<_Ty, _N, _simd> operator*(_Ty scalar, const vector<_Ty, _N, _simd> &vec);
 };
+
+template<typename Ty, size_t N, bool simd>
+constexpr vector<Ty, N, simd> operator*(Ty scalar, const vector<Ty, N, simd> &vec) {
+	vector<Ty, N, simd> res;
+	for (int i = 0; i < N; i++) {
+		res._Data[i] = vec._Data[i] * scalar;
+	}
+	return res;
+}
 
 template<typename Ty, size_t N, bool simd>
 class vector_v2 : public vector_base<vector<Ty, N, simd>, Ty, N, simd> {

@@ -179,3 +179,23 @@ TEST_CASE("add") {
 
 	CHECK(check_vector(add_a, add_b[0], add_b[1], add_b[2]));
 }
+
+TEST_CASE("scalar") {
+	float x = random_float(-100.0f, 100.0f);
+	float y = random_float(-100.0f, 100.0f);
+	float z = random_float(-100.0f, 100.0f);
+	float w = random_float(-100.0f, 100.0f);
+	float scalar = random_float(-100.0f, 100.0f);
+
+	nstd::linalg::vector4f vec4f(x, y, z, w);
+	Eigen::Vector4f eigen_vec4f(x, y, z, w);
+
+	auto s_vec = scalar * vec4f;
+	auto vec_s = vec4f * scalar;
+	auto eigen_s_vec = scalar * eigen_vec4f;
+	auto eigen_vec_s = eigen_vec4f * scalar;
+
+	CHECK(check_vector(s_vec, vec_s[0], vec_s[1], vec_s[2], vec_s[3]));
+	CHECK(check_vector(s_vec, eigen_vec_s[0], eigen_vec_s[1], eigen_vec_s[2], eigen_vec_s[3]));
+	CHECK(check_vector(s_vec, eigen_s_vec[0], eigen_s_vec[1], eigen_s_vec[2], eigen_s_vec[3]));
+}
