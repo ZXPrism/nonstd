@@ -2,17 +2,29 @@
 #include <doctest/doctest.h>
 
 #include <math/linalg/nstd_vector.h>
+#include <math/nstd_math.h>
 #include <util/nstd_type_traits.h>
 #include <util/nstd_utility.h>
 
 #include <Eigen/Dense>
 
-// TODO: REMOVE this dep in future versions
+// TODO: REMOVE these deps in future versions
+#include <random>
 #include <utility>
+
+float random_float(float left, float right) {
+	static std::random_device rd;
+	static std::mt19937_64 engine(rd());
+	std::uniform_real_distribution<float> dist(left, right);
+	return dist(engine);
+}
 
 template<typename Vec, typename... Args, std::size_t... Index>
 constexpr bool check_vector_impl(Vec &&vec, const std::tuple<Args...> &arg_tuple, std::index_sequence<Index...>) {
-	return ((vec[Index] == std::get<Index>(arg_tuple)) && ...);
+	return ((nstd::is_approx(vec[Index],
+	                         std::get<Index>(arg_tuple),
+	                         static_cast<typename nstd::remove_cvref_t<Vec>::value_type>(1e-5))) &&
+	        ...);
 }
 
 template<typename Vec, typename... Args>
@@ -51,20 +63,77 @@ TEST_CASE("init / initializer_list") {
 	CHECK(check_vector(vec4f, 123.0f, 456.0f, 678.0f, 91011.0f));
 }
 
-TEST_CASE("norm") {
+TEST_CASE("norm & norm_squared") {
+	float x = random_float(-100.0f, 100.0f);
+	float y = random_float(-100.0f, 100.0f);
+	float z = random_float(-100.0f, 100.0f);
+	float w = random_float(-100.0f, 100.0f);
+
+	nstd::linalg::vector4f vec4f(x, y, z, w);
+	Eigen::Vector4f eigen_vec4f(x, y, z, w);
+
+	CHECK(nstd::is_approx(vec4f.norm(), eigen_vec4f.norm(), 1e-5f));
+	CHECK(nstd::is_approx(vec4f.norm_squared(), eigen_vec4f.squaredNorm(), 1e-5f));
 }
 
-TEST_CASE("norm squared") {
-}
+TEST_CASE("normalize & normalized") {
+	float x = random_float(-100.0f, 100.0f);
+	float y = random_float(-100.0f, 100.0f);
+	float z = random_float(-100.0f, 100.0f);
+	float w = random_float(-100.0f, 100.0f);
 
-TEST_CASE("normalize") {
-}
+	nstd::linalg::vector4f vec4f(x, y, z, w);
+	Eigen::Vector4f eigen_vec4f(x, y, z, w);
+	eigen_vec4f.normalize();
 
-TEST_CASE("normalized") {
+	auto norm_vec4f = nstd::linalg::normalized(vec4f);
+	CHECK(check_vector(norm_vec4f, eigen_vec4f[0], eigen_vec4f[1], eigen_vec4f[2], eigen_vec4f[3]));
+
+	vec4f.normalize();
+	CHECK(check_vector(vec4f, eigen_vec4f[0], eigen_vec4f[1], eigen_vec4f[2], eigen_vec4f[3]));
+
+	nstd::linalg::vector4f zero_vec;
+	zero_vec.normalize();
+	CHECK(check_vector(zero_vec, 0.0f, 0.0f, 0.0f, 0.0f));
 }
 
 TEST_CASE("dot") {
+	float x = random_float(-100.0f, 100.0f);
+	float y = random_float(-100.0f, 100.0f);
+	float z = random_float(-100.0f, 100.0f);
+	float w = random_float(-100.0f, 100.0f);
+
+	nstd::linalg::vector4f vec4f_a(x, y, z, w);
+	Eigen::Vector4f eigen_vec4f_a(x, y, z, w);
+
+	float x1 = random_float(-100.0f, 100.0f);
+	float y1 = random_float(-100.0f, 100.0f);
+	float z1 = random_float(-100.0f, 100.0f);
+	float w1 = random_float(-100.0f, 100.0f);
+
+	nstd::linalg::vector4f vec4f_b(x1, y1, z1, w1);
+	Eigen::Vector4f eigen_vec4f_b(x1, y1, z1, w1);
+
+	CHECK(nstd::is_approx(nstd::linalg::dot(vec4f_a, vec4f_b), eigen_vec4f_a.dot(eigen_vec4f_b), 1e-5f));
 }
 
 TEST_CASE("cross") {
+	float x = random_float(-100.0f, 100.0f);
+	float y = random_float(-100.0f, 100.0f);
+	float z = random_float(-100.0f, 100.0f);
+
+	nstd::linalg::vector3f vec3f_a(x, y, z);
+	Eigen::Vector3f eigen_vec3f_a(x, y, z);
+
+	float x1 = random_float(-100.0f, 100.0f);
+	float y1 = random_float(-100.0f, 100.0f);
+	float z1 = random_float(-100.0f, 100.0f);
+
+	nstd::linalg::vector3f vec3f_b(x1, y1, z1);
+	Eigen::Vector3f eigen_vec3f_b(x1, y1, z1);
+
+	auto cross_a = nstd::linalg::cross(vec3f_a, vec3f_b);
+	auto cross_b = eigen_vec3f_a.cross(eigen_vec3f_b);
+
+	CHECK(check_vector(cross_a, cross_b[0], cross_b[1], cross_b[2]));
 }
