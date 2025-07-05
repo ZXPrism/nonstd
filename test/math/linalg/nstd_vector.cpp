@@ -137,3 +137,45 @@ TEST_CASE("cross") {
 
 	CHECK(check_vector(cross_a, cross_b[0], cross_b[1], cross_b[2]));
 }
+
+TEST_CASE("add") {
+	float x = random_float(-100.0f, 100.0f);
+	float y = random_float(-100.0f, 100.0f);
+	float z = random_float(-100.0f, 100.0f);
+
+	nstd::linalg::vector3f vec3f_a(x, y, z);
+	Eigen::Vector3f eigen_vec3f_a(x, y, z);
+
+	float x1 = random_float(-100.0f, 100.0f);
+	float y1 = random_float(-100.0f, 100.0f);
+	float z1 = random_float(-100.0f, 100.0f);
+
+	nstd::linalg::vector3f vec3f_b(x1, y1, z1);
+	Eigen::Vector3f eigen_vec3f_b(x1, y1, z1);
+
+	auto add_a = vec3f_a + vec3f_b;
+	auto add_b = eigen_vec3f_a + eigen_vec3f_b;
+
+	CHECK(check_vector(add_a, add_b[0], add_b[1], add_b[2]));
+}
+
+TEST_CASE("add") {
+	float x = random_float(-100.0f, 100.0f);
+	float y = random_float(-100.0f, 100.0f);
+	float z = random_float(-100.0f, 100.0f);
+
+	nstd::linalg::vector3f vec3f_a(x, y, z);
+	Eigen::Vector3f eigen_vec3f_a(x, y, z);
+
+	float x1 = random_float(-100.0f, 100.0f);
+	float y1 = random_float(-100.0f, 100.0f);
+	float z1 = random_float(-100.0f, 100.0f);
+
+	nstd::linalg::vector3f vec3f_b(x1, y1, z1);
+	Eigen::Vector3f eigen_vec3f_b(x1, y1, z1);
+
+	auto add_a = vec3f_a - vec3f_b;
+	auto add_b = eigen_vec3f_a - eigen_vec3f_b;
+
+	CHECK(check_vector(add_a, add_b[0], add_b[1], add_b[2]));
+}

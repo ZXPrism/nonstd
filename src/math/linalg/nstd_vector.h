@@ -124,12 +124,25 @@ template<typename Ty, size_t N, bool simd>
 class vector : public vector_base<vector<Ty, N, simd>, Ty, N, simd> {
 public:
 	using value_type = Ty;
+	using base = vector_base<vector, Ty, N, simd>;
 
-	using vector_base<vector, Ty, N, simd>::vector_base;
+	using base::base;
 
-	// vector operator+(const vector_base<vector, Ty, N, simd> &vec_base){
+	vector operator+(const vector &rhs) const {
+		vector res;
+		for (int i = 0; i < N; i++) {
+			res._Data[i] = base::_Data[i] + rhs._Data[i];
+		}
+		return res;
+	}
 
-	// }
+	vector operator-(const vector &rhs) const {
+		vector res;
+		for (int i = 0; i < N; i++) {
+			res._Data[i] = base::_Data[i] - rhs._Data[i];
+		}
+		return res;
+	}
 };
 
 template<typename Ty, size_t N, bool simd>
