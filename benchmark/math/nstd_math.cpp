@@ -36,6 +36,7 @@ TEST_CASE("bench_abs") {
 	auto bench = ankerl::nanobench::Bench();
 	bench.title("bench_abs")
 	    .warmup(100)
+	    .minEpochIterations(100)
 	    .performanceCounters(true)
 	    .relative(true);
 
@@ -63,6 +64,7 @@ TEST_CASE("bench_max") {
 	auto bench = ankerl::nanobench::Bench();
 	bench.title("bench_max")
 	    .warmup(100)
+	    .minEpochIterations(100)
 	    .performanceCounters(true)
 	    .relative(true);
 
@@ -88,6 +90,7 @@ TEST_CASE("bench_min") {
 	auto bench = ankerl::nanobench::Bench();
 	bench.title("bench_min")
 	    .warmup(100)
+	    .minEpochIterations(100)
 	    .performanceCounters(true)
 	    .relative(true);
 
