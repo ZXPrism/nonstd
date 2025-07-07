@@ -39,8 +39,8 @@ TEST_CASE("size") {
 	CHECK(nstd::linalg::vector3d::size() == 3);
 }
 
-TEST_CASE("init / default") {
-	constexpr nstd::linalg::vector2f vec2f{};
+TEST_CASE("init / single val") {
+	constexpr nstd::linalg::vector2f vec2f(0.0f);
 	CHECK(check_vector(vec2f, 0.0f, 0.0f));
 	CHECK(!check_vector(vec2f, 0.0f, 1.0f));
 }
@@ -92,7 +92,7 @@ TEST_CASE("normalize & normalized") {
 	vec4f.normalize();
 	CHECK(check_vector(vec4f, eigen_vec4f[0], eigen_vec4f[1], eigen_vec4f[2], eigen_vec4f[3]));
 
-	nstd::linalg::vector4f zero_vec;
+	nstd::linalg::vector4f zero_vec(0.0f);
 	zero_vec.normalize();
 	CHECK(check_vector(zero_vec, 0.0f, 0.0f, 0.0f, 0.0f));
 }

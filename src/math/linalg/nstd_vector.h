@@ -17,12 +17,18 @@ namespace linalg {  // without special reminder, assume using a right-handed Car
 template<typename Derived, typename Ty, size_t N, bool simd>
 class vector_base {
 protected:
-	Ty _Data[N]{};
+	Ty _Data[N];
 
 public:
 	using value_type = Ty;
 
 	constexpr vector_base() = default;
+
+	constexpr explicit vector_base(Ty &&val) {
+		for (size_t i = 0; i < N; i++) {
+			_Data[i] = val;
+		}
+	}
 
 	template<typename... Args>
 	    requires(sizeof...(Args) == N && conjunction_v<is_convertible<Args, Ty>...>)
@@ -77,7 +83,7 @@ public:
 		for (size_t i = 0; i < N; i++) {
 			res += _Data[i] * _Data[i];
 		}
-		return std::sqrt(res);
+		return std::sqrt(res);  // TODO: use nstd::sqrt
 	}
 
 	constexpr Ty norm_squared() const {
