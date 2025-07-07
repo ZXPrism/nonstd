@@ -15,6 +15,7 @@ namespace nstd {
 namespace linalg {  // without special reminder, assume using a right-handed Cartesian coordinate system
 
 template<typename Derived, typename Ty, size_t N, bool simd>
+    requires(N > 0)
 class vector_base {
 protected:
 	Ty _Data[N];
