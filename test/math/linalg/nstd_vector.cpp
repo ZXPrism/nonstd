@@ -87,7 +87,7 @@ TEST_CASE("normalize & normalized") {
 	Eigen::Vector4f eigen_vec4f(x, y, z, w);
 	eigen_vec4f.normalize();
 
-	auto norm_vec4f = nstd::linalg::normalized(vec4f);
+	auto norm_vec4f = vec4f.normalized();
 	CHECK(check_vector(norm_vec4f, eigen_vec4f[0], eigen_vec4f[1], eigen_vec4f[2], eigen_vec4f[3]));
 
 	vec4f.normalize();

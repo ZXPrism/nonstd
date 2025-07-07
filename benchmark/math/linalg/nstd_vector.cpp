@@ -12,7 +12,7 @@
 // bench_vector_normalize BEGINS
 void BM_nonstd_vector_normalize() {
 	nstd::linalg::vector4f vec4f(1.0f, 2.0f, 3.0f, 4.0f);
-	ankerl::nanobench::doNotOptimizeAway(nstd::linalg::normalized(vec4f));
+	ankerl::nanobench::doNotOptimizeAway(vec4f.normalized());
 }
 
 void BM_eigen_vector_normalize() {

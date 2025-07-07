@@ -66,15 +66,6 @@ public:
 	    : _Data{ forward<Args>(args)... } {
 	}
 
-	constexpr matrix_base(const std::initializer_list<Ty> &args) {
-		assert(args.size() == M * N);
-		for (size_t i = 0; i < M; i++) {
-			for (size_t j = 0; j < N; j++) {
-				_Data[i][j] = args.begin()[i * N + j];
-			}
-		}
-	}
-
 	constexpr decltype(auto) operator[](size_t i) const {
 		assert(i < M);
 		if constexpr (N != 1) {
@@ -158,17 +149,29 @@ public:
 		}
 	}
 
-	template<typename _Derived>
-	    requires(_Derived::size_col() == 1)
-	constexpr friend _Derived normalized(const _Derived &vec);
+	constexpr Derived normalized() const {
+		Derived normalized_vec(*static_cast<const Derived *>(this));
+		normalized_vec.normalize();
+		return normalized_vec;
+	}
 
-	template<typename _Derived>
-	    requires(_Derived::size_col() == 1)
-	constexpr friend typename _Derived::value_type dot(const _Derived &lhs, const _Derived &rhs);
+	template<size_t _ = M>
+	    requires(N == 1)
+	constexpr Ty dot(const Derived &rhs) const {
+		Ty res{};
+		for (size_t i = 0; i < M; i++) {
+			res += _Data[i][0] * rhs._Data[i][0];
+		}
+		return res;
+	}
 
-	template<typename _Derived>
-	    requires(_Derived::size_row() == 3 && _Derived::size_col() == 1)
-	constexpr friend _Derived cross(const _Derived &lhs, const _Derived &rhs);
+	template<size_t _ = M>
+	    requires(M == 3 && N == 1)
+	constexpr Derived cross(const Derived &rhs) const {
+		return { _Data[1][0] * rhs._Data[2][0] - _Data[2][0] * rhs._Data[1][0],
+			     _Data[2][0] * rhs._Data[0][0] - _Data[0][0] * rhs._Data[2][0],
+			     _Data[0][0] * rhs._Data[1][0] - _Data[1][0] * rhs._Data[0][0] };
+	}
 
 	static constexpr Derived zeros() {
 		Derived res;
@@ -201,30 +204,14 @@ public:
 	}
 };
 
-template<typename _Derived>
-    requires(_Derived::size_col() == 1)
-constexpr _Derived normalized(const _Derived &vec) {
-	_Derived normalized_vec(vec);
-	normalized_vec.normalize();
-	return normalized_vec;
+template<typename Derived>
+constexpr typename Derived::value_type dot(const Derived &lhs, const Derived &rhs) {
+	return lhs.dot(rhs);
 }
 
-template<typename _Derived>
-    requires(_Derived::size_col() == 1)
-constexpr typename _Derived::value_type dot(const _Derived &lhs, const _Derived &rhs) {
-	typename _Derived::value_type res{};
-	for (size_t i = 0; i < _Derived::size_row(); i++) {
-		res += lhs._Data[i][0] * rhs._Data[i][0];
-	}
-	return res;
-}
-
-template<typename _Derived>
-    requires(_Derived::size_row() == 3 && _Derived::size_col() == 1)
-constexpr _Derived cross(const _Derived &lhs, const _Derived &rhs) {
-	return { lhs._Data[1][0] * rhs._Data[2][0] - lhs._Data[2][0] * rhs._Data[1][0],
-		     lhs._Data[2][0] * rhs._Data[0][0] - lhs._Data[0][0] * rhs._Data[2][0],
-		     lhs._Data[0][0] * rhs._Data[1][0] - lhs._Data[1][0] * rhs._Data[0][0] };
+template<typename Derived>
+constexpr Derived cross(const Derived &lhs, const Derived &rhs) {
+	return lhs.cross(rhs);
 }
 
 template<typename Ty, size_t M, size_t N, bool simd>
@@ -272,20 +259,11 @@ public:
 		}
 		return res;
 	}
-
-	template<typename _Ty, size_t _M, size_t _N, bool _simd>
-	friend constexpr matrix<_Ty, _M, _N, _simd> _impl_scalar_mul_mat(_Ty scalar, const matrix<_Ty, _M, _N, _simd> &vec);
 };
 
 template<typename Ty, size_t M, size_t N, bool simd>
-constexpr matrix<Ty, M, N, simd> _impl_scalar_mul_mat(Ty scalar, const matrix<Ty, M, N, simd> &vec) {
-	matrix<Ty, M, N, simd> res;
-	for (size_t i = 0; i < M; i++) {
-		for (size_t j = 0; j < N; j++) {
-			res._Data[i][j] = vec._Data[i][j] * scalar;
-		}
-	}
-	return res;
+constexpr matrix<Ty, M, N, simd> _impl_scalar_mul_mat(Ty scalar, const matrix<Ty, M, N, simd> &mat) {
+	return mat * scalar;
 }
 
 template<typename Ty, size_t M, size_t N, bool simd>
