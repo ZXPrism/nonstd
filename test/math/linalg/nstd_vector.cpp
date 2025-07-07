@@ -29,14 +29,15 @@ constexpr bool check_vector_impl(Vec &&vec, const std::tuple<Args...> &arg_tuple
 
 template<typename Vec, typename... Args>
 constexpr bool check_vector(Vec &&vec, Args &&...args) {
-	static_assert(nstd::remove_cvref_t<Vec>::size() == sizeof...(Args));
+	static_assert(nstd::remove_cvref_t<Vec>::size_row() == sizeof...(Args) &&
+	              nstd::remove_cvref_t<Vec>::size_col() == 1);
 	auto arg_tuple = std::forward_as_tuple(args...);
 	return check_vector_impl(nstd::forward<Vec>(vec), arg_tuple, std::make_index_sequence<sizeof...(Args)>{});
 }
 
 TEST_CASE("size") {
-	CHECK(nstd::linalg::vector2f::size() == 2);
-	CHECK(nstd::linalg::vector3d::size() == 3);
+	CHECK(nstd::linalg::vector2f::size_row() == 2);
+	CHECK(nstd::linalg::vector3d::size_row() == 3);
 }
 
 TEST_CASE("init / single val") {
@@ -159,7 +160,7 @@ TEST_CASE("add") {
 	CHECK(check_vector(add_a, add_b[0], add_b[1], add_b[2]));
 }
 
-TEST_CASE("add") {
+TEST_CASE("sub") {
 	float x = random_float(-100.0f, 100.0f);
 	float y = random_float(-100.0f, 100.0f);
 	float z = random_float(-100.0f, 100.0f);
