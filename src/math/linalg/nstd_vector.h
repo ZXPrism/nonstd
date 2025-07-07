@@ -36,11 +36,6 @@ public:
 	    : _Data{ forward<Args>(args)... } {
 	}
 
-	template<typename _Derived, bool _simd>
-	constexpr vector_base(const vector_base<_Derived, Ty, N, _simd> &vec)
-	    : _Data(vec._Data) {
-	}
-
 	constexpr vector_base(const std::initializer_list<Ty> &args) {
 		assert(args.size() == N);
 		for (size_t i = 0; i < N; i++) {
