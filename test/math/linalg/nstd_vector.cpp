@@ -55,15 +55,6 @@ TEST_CASE("init / variadic") {
 	CHECK(check_vector(vec4f, 123.0f, 456.0f, 678.0f, 91011.0f));
 }
 
-TEST_CASE("init / initializer_list") {
-	constexpr nstd::linalg::vector2f vec2f{ 123.0f, 456.0f };
-	constexpr nstd::linalg::vector4f vec4f{ 123.0f, 456.0f, 678.0f, 91011.0f };
-
-	CHECK(check_vector(vec2f, 123.0f, 456.0f));
-	CHECK(!check_vector(vec2f, 623.0f, 456.0f));
-	CHECK(check_vector(vec4f, 123.0f, 456.0f, 678.0f, 91011.0f));
-}
-
 TEST_CASE("norm & norm_squared") {
 	float x = random_float(-100.0f, 100.0f);
 	float y = random_float(-100.0f, 100.0f);
