@@ -260,7 +260,8 @@ public:
 		for (size_t i = 0; i < M; i++) {
 			for (size_t j = 0; j < Mat::size_col(); j++) {
 				for (size_t k = 0; k < N; k++) {
-					res._Data[i][j] += base::_Data[i][k] * rhs._Data[k][j];
+					res[i][j] += base::_Data[i][k] * rhs[k][j];
+					// NOTE(25/07/08): potential optimization?
 				}
 			}
 		}
