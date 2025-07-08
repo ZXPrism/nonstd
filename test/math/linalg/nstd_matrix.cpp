@@ -24,10 +24,10 @@ template<typename Mat, typename Ty = Mat::value_type>
     requires(nstd::remove_cvref_t<Mat>::size_row() == 2 &&
              nstd::remove_cvref_t<Mat>::size_col() == 2)
 constexpr bool check_matrix2(Mat &&mat, Ty &&a11, Ty &&a12, Ty &&a21, Ty &&a22) {
-	return mat[0][0] == a11 &&
-	       mat[0][1] == a12 &&
-	       mat[1][0] == a21 &&
-	       mat[1][1] == a22;
+	return nstd::is_approx(mat[0][0], a11, 1e-5f) &&
+	       nstd::is_approx(mat[0][1], a12, 1e-5f) &&
+	       nstd::is_approx(mat[1][0], a21, 1e-5f) &&
+	       nstd::is_approx(mat[1][1], a22, 1e-5f);
 }
 
 TEST_CASE("size") {
@@ -93,21 +93,25 @@ TEST_CASE("mat mul 1") {
 TEST_CASE("mat mul 2") {
 	float a11 = random_float(-100.0f, 100.0f);
 	float a12 = random_float(-100.0f, 100.0f);
+	float a13 = random_float(-100.0f, 100.0f);
 	float a21 = random_float(-100.0f, 100.0f);
 	float a22 = random_float(-100.0f, 100.0f);
+	float a23 = random_float(-100.0f, 100.0f);
 
-	nstd::linalg::matrix2f mat2f_a(a11, a12, a21, a22);
-	Eigen::Matrix2f eigen_mat2f_a;
-	eigen_mat2f_a << a11, a12, a21, a22;
+	nstd::linalg::matrix<float, 2, 3, false> mat2f_a(a11, a12, a13, a21, a22, a23);
+	Eigen::Matrix<float, 2, 3> eigen_mat2f_a;
+	eigen_mat2f_a << a11, a12, a13, a21, a22, a23;
 
 	float a11_ = random_float(-100.0f, 100.0f);
 	float a12_ = random_float(-100.0f, 100.0f);
+	float a13_ = random_float(-100.0f, 100.0f);
 	float a21_ = random_float(-100.0f, 100.0f);
 	float a22_ = random_float(-100.0f, 100.0f);
+	float a23_ = random_float(-100.0f, 100.0f);
 
-	nstd::linalg::matrix2f mat2f_b(a11_, a12_, a21_, a22_);
-	Eigen::Matrix2f eigen_mat2f_b;
-	eigen_mat2f_b << a11_, a12_, a21_, a22_;
+	nstd::linalg::matrix<float, 3, 2, false> mat2f_b(a11_, a12_, a13_, a21_, a22_, a23_);
+	Eigen::Matrix<float, 3, 2> eigen_mat2f_b;
+	eigen_mat2f_b << a11_, a12_, a13_, a21_, a22_, a23_;
 
 	auto mul_a = mat2f_a * mat2f_b;
 	auto mul_b = (eigen_mat2f_a * eigen_mat2f_b).eval();
