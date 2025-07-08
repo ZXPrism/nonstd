@@ -77,7 +77,7 @@ void BM_nonstd_vector_add() {
 
 void BM_eigen_vector_add() {
 	Eigen::Vector4f vec4f_a(1.0f, 2.0f, 3.0f, 4.0f), vec4f_b(1.0f, 2.0f, 3.0f, 4.0f);
-	ankerl::nanobench::doNotOptimizeAway(vec4f_a + vec4f_b);
+	ankerl::nanobench::doNotOptimizeAway((vec4f_a + vec4f_b).eval());
 }
 
 void BM_glm_vector_add() {
@@ -98,6 +98,42 @@ TEST_CASE("bench_vector_add") {
 	bench.run("nonstd / vector_add", BM_nonstd_vector_add);
 }
 // bench_vector_add ENDS
+
+// bench_vector_add_multiple BEGINS
+void BM_nonstd_vector_add_multiple() {
+	nstd::linalg::vector4f vec4f_a(1.0f, 2.0f, 3.0f, 4.0f), vec4f_b(1.0f, 2.0f, 3.0f, 4.0f);
+	nstd::linalg::vector4f vec4f_c(1.0f, 2.0f, 3.0f, 4.0f), vec4f_d(1.0f, 2.0f, 3.0f, 4.0f);
+	ankerl::nanobench::doNotOptimizeAway(vec4f_a + vec4f_b + vec4f_c + vec4f_d);
+}
+
+void BM_eigen_vector_add_multiple() {
+	Eigen::Vector4f vec4f_a(1.0f, 2.0f, 3.0f, 4.0f), vec4f_b(1.0f, 2.0f, 3.0f, 4.0f);
+	Eigen::Vector4f vec4f_c(1.0f, 2.0f, 3.0f, 4.0f), vec4f_d(1.0f, 2.0f, 3.0f, 4.0f);
+	ankerl::nanobench::doNotOptimizeAway((vec4f_a + vec4f_b + vec4f_c + vec4f_d).eval());
+	// NOTE(25/07/08): remove eval(), it's 6x slower!
+	// why? an un-evaled expr template is slower than eval-ed ver?
+	// may because, if we access to un-evaled one, each time we need to re-trigger calculation
+}
+
+void BM_glm_vector_add_multiple() {
+	glm::vec4 vec4f_a(1.0f, 2.0f, 3.0f, 4.0f), vec4f_b(1.0f, 2.0f, 3.0f, 4.0f);
+	glm::vec4 vec4f_c(1.0f, 2.0f, 3.0f, 4.0f), vec4f_d(1.0f, 2.0f, 3.0f, 4.0f);
+	ankerl::nanobench::doNotOptimizeAway(vec4f_a + vec4f_b + vec4f_c + vec4f_d);
+}
+
+TEST_CASE("bench_vector_add_multiple") {
+	auto bench = ankerl::nanobench::Bench();
+	bench.title("bench_vector_add_multiple")
+	    .warmup(100)
+	    .minEpochIterations(1000)
+	    .performanceCounters(true)
+	    .relative(true);
+
+	bench.run("eigen / vector_add_multiple", BM_eigen_vector_add_multiple);
+	bench.run("glm / vector_add_multiple", BM_glm_vector_add_multiple);
+	bench.run("nonstd / vector_add_multiple", BM_nonstd_vector_add_multiple);
+}
+// bench_vector_add_multiple ENDS
 
 // bench_vector_dot BEGINS
 void BM_nonstd_vector_dot() {
