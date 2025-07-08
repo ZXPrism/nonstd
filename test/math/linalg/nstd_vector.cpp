@@ -42,6 +42,7 @@ TEST_CASE("size") {
 
 TEST_CASE("init / single val") {
 	constexpr nstd::linalg::vector2f vec2f(0.0f);
+
 	CHECK(check_vector(vec2f, 0.0f, 0.0f));
 	CHECK(!check_vector(vec2f, 0.0f, 1.0f));
 }

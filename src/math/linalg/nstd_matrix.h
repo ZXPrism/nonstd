@@ -8,7 +8,6 @@
 // TODO: REMOVE these deps in future versions
 #include <cassert>
 #include <cmath>
-#include <initializer_list>
 
 /*
  * ! assumptions !
@@ -49,7 +48,13 @@ public:
 	constexpr explicit matrix_base(Ty &&val) {
 		if constexpr (M == N) {  // diagonal init
 			for (size_t i = 0; i < M; i++) {
-				_Data[i][i] = val;
+				for (size_t j = 0; j < M; j++) {
+					if (i == j) {
+						_Data[i][j] = val;
+					} else {
+						_Data[i][j] = static_cast<Ty>(0);
+					}
+				}
 			}
 		} else {  // fallback to full init
 			for (size_t i = 0; i < M; i++) {
@@ -85,7 +90,7 @@ public:
 	}
 
 	constexpr const Ty *data() const {
-		return _Data;
+		return static_cast<const Ty *>(_Data);
 	}
 
 	constexpr Derived operator+(const Derived &rhs) const {
@@ -96,11 +101,11 @@ public:
 		return static_cast<const Derived *>(this)->_impl_sub(rhs);
 	}
 
-	// template<typename Mat>
-	//     requires (..)
-	// constexpr auto operator*(const Mat &rhs) const {
-	// 	return static_cast<const Derived *>(this)->_impl_mul(rhs);
-	// }
+	template<typename Mat>
+	    requires(Mat::size_row() == N)
+	constexpr auto operator*(const Mat &rhs) const {
+		return static_cast<const Derived *>(this)->_impl_mul(rhs);
+	}
 
 	constexpr Derived operator*(Ty scalar) const {
 		return static_cast<const Derived *>(this)->_impl_mul_scalar(scalar);
@@ -198,7 +203,13 @@ public:
 	static constexpr Derived identity() {
 		Derived res;
 		for (size_t i = 0; i < M; i++) {
-			res._Data[i][i] = static_cast<Ty>(1);
+			for (size_t j = 0; j < M; j++) {
+				if (i == j) {
+					res._Data[i][j] = static_cast<Ty>(1);
+				} else {
+					res._Data[i][j] = static_cast<Ty>(0);
+				}
+			}
 		}
 		return res;
 	}
@@ -244,9 +255,15 @@ public:
 	}
 
 	template<typename Mat>
-	constexpr matrix _impl_mul(const Mat &rhs) const {
-		matrix<Ty, M, Mat::N, simd> res;
-
+	constexpr auto _impl_mul(const Mat &rhs) const {
+		auto res = matrix<Ty, M, Mat::size_col(), simd>::zeros();
+		for (size_t i = 0; i < M; i++) {
+			for (size_t j = 0; j < Mat::size_col(); j++) {
+				for (size_t k = 0; k < N; k++) {
+					res._Data[i][j] += base::_Data[i][k] * rhs._Data[k][j];
+				}
+			}
+		}
 		return res;
 	}
 
