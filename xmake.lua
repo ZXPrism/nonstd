@@ -37,6 +37,7 @@ for _, file in ipairs(os.files("test/*.cpp")) do
         set_languages("cxx23")
         set_kind("binary")
         add_files(file)
+        add_deps("nonstd")
         add_packages("doctest")
         add_includedirs("src")
         add_rules("test")
@@ -49,6 +50,7 @@ for _, file in ipairs(os.files("test/**/*.cpp")) do
         set_languages("cxx23")
         set_kind("binary")
         add_files(file)
+        add_deps("nonstd")
 
         add_packages("doctest")
         if string.find(path.absolute(file), "math") then
@@ -67,6 +69,7 @@ for _, file in ipairs(os.files("benchmark/*.cpp")) do
         set_languages("cxx23")
         set_kind("binary")
         add_files(file)
+        add_deps("nonstd")
         add_packages("nanobench", "doctest")
         add_includedirs("src")
         add_rules("bench")
@@ -79,6 +82,7 @@ for _, file in ipairs(os.files("benchmark/**/*.cpp")) do
         set_languages("cxx23")
         set_kind("binary")
         add_files(file)
+        add_deps("nonstd")
         
         add_packages("nanobench", "doctest")
         if string.find(path.absolute(file), "math") then
